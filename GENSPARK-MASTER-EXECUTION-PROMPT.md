@@ -1,4 +1,4 @@
-# SANDAR — Genspark Master Execution Prompt
+# SANDAR — Master System & Mandatory Production Execution Prompt
 
 > Use this as the primary task instruction for Genspark Super Agent. It authorizes implementation work in the SANDAR repository within the boundaries below; it does not authorize spending money, publishing production, or exposing personal data.
 
@@ -257,3 +257,127 @@ At completion, return:
 - **Next milestone:** one concrete next action.
 
 If you cannot execute a requested operation because Genspark lacks GitHub access, browser access, credentials, or a supported integration, say so plainly and provide the smallest exact handoff. Never fabricate commits, test output, account status, or deployment URLs.
+
+
+---
+
+# MANDATORY OWNER OVERRIDE — PRODUCTION, CLERK, CLOUDFLARE BYOK
+
+**This section is an explicit owner instruction and supersedes any earlier wording in this document that treats production deployment, Clerk Production, or production configuration as optional or requiring a second approval.** The required destination is a working SANDAR production application, not a mockup, local-only build, or preview-only project.
+
+## A. Mandatory completion target
+
+You must:
+1. Implement the SANDAR application and its required backend/data layer.
+2. Push all implementation changes directly to the authorized GitHub repository \`Sparkmind-obp-off/Sandar\`, branch \`main\`, using focused commits and preserving history.
+3. Deploy the application to the actual Cloudflare Production environment.
+4. Configure and verify Clerk **Production** authentication for the production application.
+5. Configure Cloudflare production bindings and server-side BYOK secrets for the approved provider integrations.
+6. Run post-deployment smoke tests against the real production URL and report evidence.
+
+Do not stop at a preview deployment if production access and required credentials are available. The owner has expressly requested production deployment; routine, zero-cost production deployment steps are authorized by this prompt. Never force-push, bypass branch protection, or overwrite unrelated work.
+
+## B. Cloudflare is the required production target
+
+- Inspect the live Cloudflare account, existing Pages/Workers projects, domains, bindings, deployments, and current plan before making changes.
+- Use the existing SANDAR Cloudflare project if one exists and is verified as the intended project. Do not create duplicate projects without checking.
+- Configure the production build, server-side API, environment bindings, database migrations, routing, and custom domain only where account access and domain ownership are verified.
+- Use Cloudflare Pages/Workers and D1 where technically appropriate. Use R2 only if required and the actual cost is verified as zero or explicitly approved.
+- Deploy to Production, not merely Preview. Verify the deployment ID, commit, production environment, URL, TLS, routing, and health.
+- Run production smoke tests for home page, public catalogue, API health, authentication boundaries, database access, and core task flows.
+- If the custom domain is not verified or DNS access is unavailable, deploy to the verified Cloudflare production URL if possible and report the custom-domain issue separately. Never claim a domain is connected without evidence.
+
+## C. Clerk Production is mandatory
+
+Clerk Production is a required part of the production release; a Clerk Development instance is not an acceptable substitute.
+
+- Inspect current Clerk project/account state and official current production requirements.
+- Configure the Production instance, production publishable/secret keys, allowed origins, callback/redirect URLs, sign-in/sign-up, sign-out, session handling, and server-side token/session verification.
+- Keep development and production credentials separate.
+- Derive callback URLs from the verified production deployment and configured domain; do not guess.
+- Enforce authentication and object-level workspace authorization on every private API request. Client-side gating alone is insufficient.
+- Test anonymous denial, invalid/expired sessions, authenticated access, and cross-user isolation.
+- Do not purchase a plan, change billing, or activate a paid feature. If Clerk's current production requirement incurs a charge, stop before the charge and report the exact amount/requirement. Continue all work that does not require payment.
+- If Clerk account authorization or secret entry is missing, complete the integration code and precise setup steps, then mark the production gate blocked until the owner enters the values through Clerk/Cloudflare's official secure interfaces.
+
+## D. Cloudflare BYOK — required provider integration readiness
+
+Implement a secure server-side BYOK adapter/configuration layer. The owner wants these provider integrations assessed and prepared:
+
+### Required providers
+- **Groq:** LLM inference for explicit, non-sensitive assistance. Use only models currently available to the authorized account. Model IDs must be configurable, not stale hardcoded assumptions.
+- **Tavily:** public web discovery and research. Treat results as leads; verify original publisher/issuer sources before catalogue publication.
+- **Firecrawl:** selective extraction of public web pages after checking terms, permissions, and cost. Never crawl private/authenticated areas.
+
+### Other provider discovery
+Inspect the actual SANDAR requirements and identify any additional genuinely necessary providers (for example, email delivery, observability, or error reporting). Do not add providers just to make the stack look larger. For each candidate, document purpose, data shared, current free tier/pricing, limits, fallback, and why it is needed. Do not activate speculative services.
+
+### Secret names
+Use environment/secret names only in code and documentation; never include secret values:
+- \`GROQ_API_KEY\`
+- \`TAVILY_API_KEY\`
+- \`FIRECRAWL_API_KEY\`
+- \`CLERK_SECRET_KEY\`
+- \`CLERK_PUBLISHABLE_KEY\` (public client configuration; environment-specific)
+- \`CLERK_WEBHOOK_SECRET\` (only if a webhook is implemented)
+- Any required Cloudflare binding/resource identifiers.
+
+Configure runtime secrets through Cloudflare Worker secrets or the appropriate Pages production environment settings. Keep keys server-side. Never expose them in browser bundles, source code, GitHub commits, logs, analytics, screenshots, reports, prompts, or chat messages.
+
+### Provider adapter requirements
+- Typed server-side adapters with validation, timeouts, bounded retries, rate limits, safe errors, and health/configuration status.
+- Graceful disabled/unconfigured states; SANDAR's core functionality must remain usable if Groq, Tavily, or Firecrawl is not configured.
+- No private financial/workspace data sent to Groq or any third party by default. Any future personal-data processing requires separate explicit consent, data minimization, retention review, and owner approval.
+- Tavily/Firecrawl must not become mandatory runtime dependencies for public catalogue browsing.
+- Verify current pricing, free quota, rate limits, and possible overages before making calls. Add caps where supported. If cost is unclear or cannot be capped, leave the provider disabled.
+- Test providers with a minimal non-sensitive query only after credentials have been securely configured. Record provider, model/endpoint, timestamp, status, latency, quota/cost evidence where available—never record the key.
+- Apify and Scrape.ly remain disabled unless a specific public-data requirement, exact Actor/service pricing, legal/terms review, and zero-cost or separately approved cost are established. Never launch paid Actors under this prompt.
+
+## E. Credential access and secure setup
+
+- Do not fabricate, guess, scrape, retrieve from browser storage, or ask the owner to paste credentials into chat or into this master prompt.
+- Use an authenticated official provider console only when the environment exposes an authorized account session and the owner has permitted that access. Do not assume Genspark has access to the user's local browser or logged-in account.
+- If you cannot access a provider console, give the owner the exact steps to create the key and enter it directly into Cloudflare's secret manager. Do not request screenshots containing secret values.
+- Verify only that a secret is present/configured and that a test request succeeds; never print or echo the secret.
+- Use ignored local development secret files only for local testing. Ensure they are excluded from Git.
+- If a secret is accidentally exposed, stop using it, ask the owner to rotate it through the official console, and do not repeat the value.
+
+## F. Rp0 cost guardrail
+
+The owner requires a Rp0 default. Production deployment and integrations are mandatory goals, but they do not authorize charges.
+
+Before any operation that could incur cost:
+1. Check current official provider pricing and the actual account plan.
+2. Calculate the maximum plausible charge, including usage, retries, storage, egress, build minutes, and add-ons.
+3. If the maximum is non-zero, unclear, uncapped, or requires a payment method/upgrade, do not execute that charge.
+4. Continue implementation and zero-cost deployment preparation, and report exactly what is blocked.
+5. Never start a paid trial, upgrade, purchase credits, add a payment method, or change billing without the owner's separate explicit approval of the exact cost.
+
+## G. Production release gate and truthful status
+
+Production is **VERIFIED** only when evidence confirms:
+- code and deployment configuration are pushed to the correct GitHub repository/branch;
+- Cloudflare Production deployment is live and its actual URL is reachable;
+- Clerk Production is configured and its authentication/session checks pass;
+- required production database bindings and migrations are applied safely;
+- provider adapters are implemented, and Groq/Tavily/Firecrawl each show configured + tested, or clearly disabled with the exact missing owner action;
+- no secrets are present in Git history, browser bundles, logs, or public output;
+- critical production smoke tests pass;
+- rollback and operational instructions are documented;
+- actual cost remains Rp0 unless separately approved.
+
+If a required credential, account permission, domain verification, or unavoidable paid requirement prevents completion, use status **PRODUCTION BLOCKED**. Complete every independent implementation task; state the exact blocker and owner action. Never label a preview as production or a configured adapter as a tested integration.
+
+## H. Final report additions
+
+Report all of the following:
+- GitHub repository, branch, latest commit SHA, and changed paths.
+- Cloudflare project name, environment, deployment ID, verified production URL, custom-domain/TLS status, and smoke-test results.
+- Clerk Production instance/configuration state and authentication test results.
+- Groq, Tavily, Firecrawl: adapter status, secret configured yes/no (never value), API test status, model/endpoint, quota/cost verification, and fallback state.
+- Any other provider added and the concrete reason.
+- Exact tests and failures.
+- Confirmation of whether any cost was incurred.
+- Every remaining blocker and the precise owner-only action.
+
+**Start executing now.** Audit current repository and connected accounts, implement, push to GitHub, configure the production stack, deploy to Cloudflare Production, and verify. Do not return only a plan.
