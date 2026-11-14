@@ -72,16 +72,38 @@
       if (!cfg.clerkPk || /\.pages\.dev$/.test(location.hostname)) { S.state.authReady = true; return resolve() }
       let host
       try { host = atob(cfg.clerkPk.replace(/^pk_(live|test)_/, '')).replace(/\$$/, '') } catch (_) { S.state.authReady = true; return resolve() }
-      const s = document.createElement('script')
-      s.src = `https://${host}/npm/@clerk/clerk-js@5/dist/clerk.browser.js`
-      s.async = true
-      s.crossOrigin = 'anonymous'
-      s.setAttribute('data-clerk-publishable-key', cfg.clerkPk)
-      const done = () => { S.state.authReady = true; resolve() }
-      const timer = setTimeout(done, 9000)
-      s.onload = async () => {
+
+      let settled = false
+      const done = () => {
+        if (settled) return
+        settled = true
+        S.state.authReady = true
+        resolve()
+      }
+      const timer = setTimeout(() => {
+        console.warn('Clerk initialization timed out')
+        done()
+      }, 15000)
+      const loadScript = (src, publishableKey) => new Promise((ok, fail) => {
+        const script = document.createElement('script')
+        script.src = src
+        script.async = true
+        script.crossOrigin = 'anonymous'
+        if (publishableKey) script.setAttribute('data-clerk-publishable-key', publishableKey)
+        script.onload = ok
+        script.onerror = () => fail(new Error('Failed to load Clerk script: ' + src))
+        document.head.appendChild(script)
+      })
+
+      ;(async () => {
         try {
-          await window.Clerk.load({ localization: undefined })
+          // Clerk Core 3 separates the prebuilt UI bundle from ClerkJS.
+          await loadScript(\`https://\${host}/npm/@clerk/ui@1.42.4/dist/ui.browser.js\`)
+          await loadScript(\`https://\${host}/npm/@clerk/clerk-js@6.43.1/dist/clerk.browser.js\`, cfg.clerkPk)
+          await window.Clerk.load({
+            localization: undefined,
+            ui: { ClerkUI: window.__internal_ClerkUICtor },
+          })
           S.state.clerk = window.Clerk
           S.state.user = window.Clerk.user || null
           window.Clerk.addListener(({ user }) => {
@@ -89,12 +111,13 @@
             S.state.user = user || null
             if (changed) { S.state.workspace = null; S.renderNav(); S.router() }
           })
-        } catch (e) { console.warn('auth load failed') }
-        clearTimeout(timer)
-        done()
-      }
-      s.onerror = () => { clearTimeout(timer); done() }
-      document.head.appendChild(s)
+        } catch (e) {
+          console.warn('Clerk initialization failed', e)
+        } finally {
+          clearTimeout(timer)
+          done()
+        }
+      })()
     })
   }
   S.signedIn = () => !!(S.state.clerk && S.state.clerk.user)
