@@ -3,13 +3,14 @@
 Status: implemented in code as of 2026-11-14. This file records what was actually built and why.
 
 ## D-01 Stack: Hono + Cloudflare Pages Functions + D1 (modular monolith)
-- **Chosen:** Hono (TypeScript) API under `/api/v1`, served by a single Cloudflare Pages `_worker.js`; vanilla-JS SPA in `public/static/` (no client framework, no CDN runtime dependency except Clerk JS from the Clerk Frontend API).
+- **Chosen:** Hono (TypeScript) API under `/api/v1`, served by a single Cloudflare Pages `_worker.js`; vanilla-JS SPA in `public/static/`; ClerkJS and its prebuilt UI are loaded from the Clerk Frontend API CDN.
 - **Why:** repository had no code; Cloudflare-first was preferred by the brief; owner account already hosts Pages + D1; free tier covers MVP (Pages free requests, D1 free 5 GB / 5M reads/day / 100k writes/day as published by Cloudflare — re-verify before scale).
 - **Trade-offs:** no React/Vite SPA build (lower complexity, smaller bundle, no build step for UI); routing done client-side with a tiny router. Revisit if UI complexity grows.
 
 ## D-02 Authentication: Clerk Production, verified server-side
 - Production instance `ins_3M6aI0nGoe4sQ1EYQPr0GFuCJ1I`, domain `sandar.biz.id`, Frontend API `https://clerk.sandar.biz.id` (DNS CNAMEs verified resolving to Clerk on 2026-11-14).
-- Browser obtains a short-lived session JWT via Clerk JS and sends `Authorization: Bearer`. The Worker verifies **RS256 signature (JWKS from issuer, cached)**, `iss`, `exp`/`nbf` with 10 s skew, and `azp` against `AUTHORIZED_PARTIES`. No Clerk SDK dependency — Web Crypto only (`src/lib/auth.ts`).
+- Browser obtains a short-lived session JWT via ClerkJS and sends `Authorization: Bearer`. The Worker verifies **RS256 signature (JWKS from issuer, cached)**, `iss`, `exp`/`nbf` with 10 s skew, and `azp` against `AUTHORIZED_PARTIES`. Backend verification remains Web Crypto only (`src/lib/auth.ts`).
+- Client uses ClerkJS **6.43.1** with Clerk UI **1.42.4**, loaded sequentially from the Clerk Frontend API CDN using the Core 3 initialization contract. This replaces the previous hard-coded ClerkJS v5 URL, which Clerk's Production minimum-version protection rejects (minimum documented version: 6.42.3).
 - User and workspace are derived from the verified `sub`; client-supplied IDs are ignored (tested).
 - Bearer tokens (not cookies) on the API → no ambient-credential CSRF; an Origin check on writes adds defence in depth.
 - `x-dev-user` stub works **only** when `ENVIRONMENT=development` (tested to be ignored otherwise).
@@ -45,3 +46,10 @@ Family Balance, wellbeing storage, reminders/notifications, bank connections, ex
 ## Unresolved conflicts / notes
 - docs/16 lists `status (planned/expected/confirmed/paid)`; docs/27 lists `certainty (confirmed/estimated/unknown)`. Implemented docs/27 (`certainty`) as the data contract; payment status is out of MVP scope.
 - Product category updated to "Agentic Life Navigation & Resilience OS" per owner override in the master prompt.
+
+
+## D-10 ClerkJS Core 3 upgrade — 2026-11-15
+- Root cause identified from the production screenshot and repository code: `public/static/core.js` loaded `@clerk/clerk-js@5`, while Clerk documents that the default minimum ClerkJS version is 6.42.3 and Core 2 / ClerkJS 5 is too old for the current protection.
+- Updated the client loader to load `@clerk/ui@1.42.4` first, then `@clerk/clerk-js@6.43.1`, then initialize with `ui: { ClerkUI: window.__internal_ClerkUICtor }`, matching Clerk's current JavaScript Quickstart/Core 3 flow.
+- Code committed to `main`; this record does not claim a production deployment or successful human sign-in. Rebuild/deploy, clear browser cache, and verify a real Google sign-in before marking authentication production-verified.
+- Official references: https://clerk.com/docs/js-frontend/getting-started/quickstart and https://clerk.com/docs/guides/protect/protections/require-minimum-clerkjs-version
