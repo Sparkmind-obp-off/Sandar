@@ -105,3 +105,92 @@ footer.site ul { list-style: none; padding: 0; display: flex; flex-wrap: wrap; g
 #clerk-mount { min-height: 200px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
 @media (forced-colors: active) { .badge, .btn { border: 1px solid CanvasText; } }
+
+
+/* SANDAR UX refresh — responsive public journey and guided onboarding */
+.eyebrow,.card-kicker,.step-label{display:block;font-size:.72rem;letter-spacing:.12em;font-weight:800;color:var(--brand);text-transform:uppercase}
+.hero-home{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(250px,.85fr);gap:2rem;align-items:center;padding:2.25rem 0 2rem}
+.hero-copy{max-width:48rem}
+.hero-home h1{max-width:13ch;font-size:clamp(2.1rem,5vw,3.65rem);letter-spacing:-.045em;line-height:1.08;margin:.8rem 0 1rem}
+.hero-home .lead{font-size:1.16rem;max-width:43rem;line-height:1.7}
+.hero-actions{margin-top:1.4rem;gap:.7rem}
+.hero-note{margin-top:.8rem}
+.hero-panel{background:var(--brand);color:#fff;border-radius:20px;padding:1.5rem;box-shadow:0 14px 34px rgba(15,92,77,.16)}
+.hero-panel-mark{display:grid;place-items:center;width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.14);font-size:1.7rem;font-weight:800}
+.hero-panel-title{font-size:1.2rem;font-weight:750;margin:1rem 0 .3rem}
+.hero-panel p{color:rgba(255,255,255,.88)}
+.hero-points{list-style:none;margin:1rem 0 0;padding:0;display:grid;gap:.55rem;font-size:.9rem}
+.hero-points li:before{content:"✓";display:inline-grid;place-items:center;width:1.3rem;height:1.3rem;margin-right:.5rem;border-radius:50%;background:rgba(255,255,255,.16);font-weight:800}
+.journey-section,.journey-flow{padding:1rem 0 1.5rem}
+.section-heading{display:flex;align-items:end;justify-content:space-between;gap:1rem;margin:1rem 0}
+.section-heading h2{margin:.35rem 0 0}
+.section-heading>p{max-width:20rem;margin:0}
+.journey-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:.9rem}
+.journey-card{min-height:230px;padding:1.2rem;position:relative;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease}
+.journey-card:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(0,0,0,.08)}
+.journey-card .icon{display:grid;place-items:center;width:42px;height:42px;border-radius:12px;background:var(--brand-soft);color:var(--brand);font-size:1.4rem}
+.journey-card h3{font-size:1.08rem;margin:.4rem 0}
+.journey-card .card-link{margin-top:auto;padding-top:.8rem;color:var(--brand);font-size:.9rem;font-weight:750}
+.journey-flow{margin-top:1rem}
+.journey-flow .steps-howto{grid-template-columns:repeat(4,minmax(0,1fr))}
+.journey-flow .steps-howto li{padding:1.15rem}
+.steps-howto li::before{display:none}
+.step-label{font-size:.68rem;margin-bottom:.7rem}
+.trust-wide{max-width:none;display:grid;grid-template-columns:1.2fr 1fr;gap:2rem;align-items:center;margin:2rem 0 1rem;padding:1.4rem 1.5rem}
+.trust-wide h2{margin:.3rem 0 .5rem;font-size:1.35rem}
+.trust-wide p{margin:.2rem 0}
+.trust-wide ul{margin:.2rem 0;padding-left:1.2rem}
+.onboarding-wrap{max-width:850px;margin:0 auto}
+.back-link{display:inline-block;margin:.25rem 0 1.2rem;text-decoration:none;font-weight:650}
+.onboarding-heading{max-width:45rem}
+.onboarding-heading h1{margin:.5rem 0 .7rem;max-width:18ch}
+.onboarding-progress{display:flex;gap:.4rem;margin:1.5rem 0 .6rem}
+.onboarding-progress span{height:5px;flex:1;border-radius:99px;background:#dedbd2}
+.onboarding-progress span.active{background:var(--brand)}
+.onboarding-grid{grid-template-columns:repeat(2,minmax(0,1fr));margin:1rem 0}
+.onboarding-choice{position:relative;min-height:150px;padding:1.1rem 3rem 1.1rem 1.1rem;border-width:1px}
+.onboarding-choice .icon{font-size:1.45rem;color:var(--brand)}
+.onboarding-choice h3{margin:.25rem 0}
+.onboarding-choice.selected{border:2px solid var(--brand);background:#f1f7f3;box-shadow:0 0 0 3px rgba(15,92,77,.08)}
+.choice-indicator{position:absolute;right:1rem;top:1rem;display:grid;place-items:center;width:28px;height:28px;border:1px solid var(--line);border-radius:50%;font-weight:800;color:var(--brand)}
+.onboarding-choice.selected .choice-indicator{background:var(--brand);color:#fff;border-color:var(--brand)}
+.onboarding-next{display:flex;justify-content:space-between;align-items:center;gap:1.2rem;padding:1.25rem}
+.onboarding-next h2{font-size:1.2rem;margin:.25rem 0}
+.onboarding-next p{max-width:36rem;margin:.2rem 0}
+.onboarding-privacy{margin:1rem 0}
+@media(max-width:980px){
+ .journey-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .journey-flow .steps-howto{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .hero-home{grid-template-columns:1fr minmax(230px,.7fr);gap:1.2rem}
+}
+@media(max-width:760px){
+ header.site .wrap{min-height:unset;display:flex;flex-wrap:wrap;gap:.25rem;padding-top:.55rem;padding-bottom:.45rem}
+ .brand{min-height:42px}
+ nav.main{order:2;width:100%;margin:0;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none}
+ nav.main::-webkit-scrollbar{display:none}
+ nav.main ul{width:max-content;min-width:100%;flex-wrap:nowrap;gap:.2rem}
+ nav.main a,nav.main button{white-space:nowrap;padding:.45rem .7rem;font-size:.9rem}
+ main{padding:1.25rem 0 2rem}
+ .hero-home{grid-template-columns:1fr;padding:1.1rem 0 1.3rem;gap:1.1rem}
+ .hero-home h1{font-size:clamp(2rem,8vw,2.8rem);max-width:15ch}
+ .hero-home .lead{font-size:1.04rem}
+ .hero-panel{padding:1.15rem;border-radius:16px}
+ .section-heading{display:block}
+ .section-heading>p{margin-top:.4rem}
+ .trust-wide{grid-template-columns:1fr;gap:.6rem}
+ .onboarding-next{display:block}
+ .onboarding-next .row{margin-top:1rem}
+}
+@media(max-width:520px){
+ body{font-size:1rem}
+ .wrap{padding-left:1rem;padding-right:1rem}
+ .journey-grid,.journey-flow .steps-howto,.onboarding-grid{grid-template-columns:1fr}
+ .journey-card{min-height:unset}
+ .journey-card .card-link{padding-top:.4rem}
+ .onboarding-choice{min-height:unset}
+ .hero-actions{display:grid;grid-template-columns:1fr}
+ .hero-actions .btn{width:100%}
+ .onboarding-next .row{display:grid;grid-template-columns:1fr}
+ .onboarding-next .btn{width:100%}
+ h2{font-size:1.3rem}
+}
