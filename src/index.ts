@@ -57,9 +57,9 @@ const shell = (clerkPk: string | undefined) => `<!doctype html>
 <a class="skip-link" href="#main">Lewati ke konten utama</a>
 <div id="root"><noscript><p style="padding:1rem">SANDAR memerlukan JavaScript. Katalog sumber publik juga tersedia melalui <a href="/api/v1/catalogue/resources">API publik</a>.</p></noscript></div>
 <div id="live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-<script src="/static/core.js?v=ux-onboarding-20261115" defer></script>
-<script src="/static/ruang.js?v=ux-onboarding-20261115" defer></script>
-<script src="/static/app.js?v=ux-onboarding-20261115" defer></script>
+<script src="/static/core.js?v=ux-onboarding-fix-20261115" defer></script>
+<script src="/static/ruang.js?v=ux-onboarding-fix-20261115" defer></script>
+<script src="/static/app.js?v=ux-onboarding-fix-20261115" defer></script>
 </body>
 </html>`
 
