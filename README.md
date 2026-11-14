@@ -1,6 +1,6 @@
 # SANDAR
 
-**Life Navigation & Resilience OS**
+**Agentic Life Navigation & Resilience OS**
 
 SANDAR is a privacy-first, user-directed system that helps people understand a question or goal they choose, organize only the information needed, navigate trustworthy public resources and opportunities, and prepare for uncertainty.
 
@@ -36,9 +36,65 @@ Help people navigate changing real-life circumstances with more clarity, agency,
 
 ## Current status
 
-**Stage: documentation-first product and engineering specification.** The repository contains 31 Markdown documents. The latest expansion adds mission/product strategy, onboarding and consent, customer journey/service blueprint, information architecture/UI specification, database and data lifecycle, backend/API authorization contract, domain rules and traceability, research tooling/cost governance, and product analytics/feedback.
+**Stage: working MVP (agentic SaaS, Free tier only).** The repository now contains a functional application in addition to the 36 specification documents. See "Implementation" below for exactly what is built, tested, and deployed. Documents remain specifications; implementation claims are backed by code and test output.
 
-These documents are specifications, not evidence of a deployed application. No production database, authentication, API, public-service integration, domain/DNS configuration, or runtime test is claimed by this documentation update.
+## Implementation
+
+### URLs
+- Production (Cloudflare Pages project `sandar`): https://sandar.pages.dev
+- Custom domain: https://sandar.biz.id (see Deployment status)
+- Health: `/api/v1/health` · Public catalogue API: `/api/v1/catalogue/resources`
+- GitHub: https://github.com/Sparkmind-obp-off/Sandar
+
+### Tech stack
+Hono (TypeScript) on Cloudflare Pages Functions · Cloudflare D1 (`sandar-production`) · Clerk Production auth (server-side RS256 JWT verification) · vanilla-JS accessible SPA (Bahasa Indonesia) · Vitest.
+
+### Features implemented
+| Area | What works | Key paths |
+|---|---|---|
+| Public experience | Beranda, cara kerja, harga (hypothesis), privasi/ketentuan drafts, aksesibilitas, bantuan; offline banner; skip link; ARIA live announcements | `public/static/core.js` |
+| Public catalogue | List/search/filter by topic, kind, status; detail with provenance (publisher, source URL, retrieved/verified dates, review interval, caveats); freshness labels (Terverifikasi / Belum diverifikasi / Informasi lama / Perlu diperiksa); anonymous "report" → needs_review | `GET /api/v1/catalogue/resources[/:id]`, `POST …/:id/report` |
+| Guest cash-flow | In-memory calculator, nothing sent to server | `/coba/arus-uang` |
+| Auth | Clerk Production sign-in UI; API verifies signature, issuer, expiry, authorized party; one workspace per user | `src/lib/auth.ts` |
+| Consent | Purpose-specific: workspace_storage, ai_processing, external_search; grant/revoke; saving blocked without storage consent | `/api/v1/me/consents` |
+| Agentic core | Orchestrator + 5 specialist agents, deterministic router, task state machine, clarifying questions, structured layered results, task events audit, cancel/discard | `/api/v1/me/tasks*`, `src/agents/` |
+| Plans & progress | Save selected suggestions as plan, add/edit/tick/delete steps, review date, archive/done | `/api/v1/me/plans*` |
+| Financial | Cash-flow items CRUD (integer minor units, certainty, recurrence), period summary, scenario preview (never persisted) | `/api/v1/me/cash-flow-items*`, `/cash-flow/summary`, `/scenarios/preview` |
+| Goals | CRUD | `/api/v1/me/goals*` |
+| Entitlements | Central plan config, server-side quotas (agent runs, AI, search, counts), usage meter | `src/domain/entitlements.ts` |
+| Providers (BYOK) | Groq / Tavily / Firecrawl adapters with consent, quotas, daily caps, timeouts, redaction; graceful disabled state | `src/providers/index.ts` |
+| Billing | Provider-neutral adapter, mock + Midtrans webhook verification, idempotent webhooks, amount check, state transitions — **OFF in production** | `src/billing/index.ts` |
+| Privacy ops | Export (JSON), verified deletion (counts remaining = 0), minimal audit events, rate limits, no-store private responses, CSP/HSTS | `/api/v1/me/export`, `DELETE /api/v1/me/workspace` |
+| Curator | Admin-only catalogue create, provider status, Firecrawl extract | `/api/v1/me/admin/*` (Clerk user IDs in `ADMIN_SUBJECTS`) |
+
+### Not yet implemented
+Family Balance, wellbeing storage, reminders/notifications, organization tier, live payments/checkout UI, curator UI for editing listings, multi-currency, i18n beyond Indonesian, PWA offline cache.
+
+### Data model
+Tables: users, workspaces, goals, cash_flow_items, resource_listings, listing_reports, consent_records, agent_tasks, task_events, plans, plan_steps, usage_counters, provider_usage, rate_limits, subscriptions, payments, webhook_events, audit_events (`migrations/0001_initial_schema.sql`).
+
+### Local development
+```bash
+npm install
+cp .dev.vars.example .dev.vars           # ENVIRONMENT=development enables x-dev-user stub
+npm run build
+npm run db:migrate:local && npm run db:seed:local
+pm2 start ecosystem.config.cjs           # http://localhost:3000
+npm test                                 # vitest
+npm run typecheck
+```
+
+### Environment variables (names only)
+Vars (wrangler.jsonc): `ENVIRONMENT`, `APP_ORIGIN`, `AUTHORIZED_PARTIES`, `CLERK_PUBLISHABLE_KEY`, `CLERK_ISSUER`, `GROQ_MODEL`, `PROVIDER_DAILY_CAPS`, `BILLING_ENABLED`, `PAYMENT_PROVIDER`.
+Secrets (`wrangler pages secret put … --project-name sandar`): `CLERK_SECRET_KEY`, `ADMIN_SUBJECTS`, `GROQ_API_KEY`, `TAVILY_API_KEY`, `FIRECRAWL_API_KEY`, optional `CLERK_JWT_KEY`, `MIDTRANS_SERVER_KEY`.
+
+### Deployment (Cloudflare Pages, owner's account via BYOK token)
+```bash
+npm run db:migrate:prod                  # applies migrations to remote D1
+npm run db:seed:prod                     # idempotent INSERT OR IGNORE
+npm run deploy:prod                      # wrangler pages deploy dist --project-name sandar --branch main
+```
+Rollback: `npx wrangler pages deployment list --project-name sandar`, then redeploy a previous commit (`git checkout <sha> && npm run deploy:prod`) or roll back from the Cloudflare dashboard. D1: export before risky migrations (`npx wrangler d1 export sandar-production --remote --output backup.sql`); D1 Time Travel allows point-in-time restore.
 
 ## Documentation index
 
@@ -75,6 +131,13 @@ These documents are specifications, not evidence of a deployed application. No p
 - [08 Research and source policy](docs/08-research-and-source-policy.md)
 - [17 Public catalogue specification](docs/17-public-catalogue-spec.md)
 - [30 Research tooling and cost policy](docs/30-research-tooling-and-cost-policy.md)
+
+### Implementation, business, and launch
+- [32 Implementation decisions](docs/32-implementation-decisions.md)
+- [33 Payment gateway evaluation](docs/33-payment-gateway-evaluation.md)
+- [34 Business model and pricing](docs/34-business-model-and-pricing.md)
+- [35 Agentic product architecture](docs/35-agentic-product-architecture.md)
+- [36 Launch and validation plan](docs/36-launch-and-validation-plan.md)
 
 ### Delivery and quality
 - [09 MVP roadmap](docs/09-mvp-roadmap.md)
