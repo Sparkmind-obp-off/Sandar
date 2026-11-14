@@ -578,3 +578,168 @@ Do not report SANDAR as production-ready unless all applicable evidence exists:
 12. Report what is implemented, what is tested, what is deployed, what remains blocked, and any owner action required.
 
 **Start executing this updated business/product direction now.** Do not respond with another concept-only proposal. Inspect the live repository, reconcile all existing specs, implement the functional agentic SaaS MVP, update the required docs, run available checks, push to **main**, and deploy to the exact Cloudflare Pages production target when authorized access and zero-cost conditions permit. Billing must remain OFF unless the owner separately approves activation.
+
+
+---
+
+# 2026-11-15 — OWNER'S MANDATORY EXECUTION ORDER (HIGHEST PRIORITY)
+
+This section is the latest explicit owner instruction. It supersedes any earlier conflicting sequencing, optionality, or wording in this prompt. Execute the stages in this exact order. Do not stop after producing an audit, recommendation, mockup, or implementation plan.
+
+## Stage 1 — Resolve Clerk Production authentication before UI redesign
+
+**This is the first priority and a release blocker.** The owner supplied a real mobile-browser screenshot from 2026-11-15 showing Clerk's error: "This app uses an outdated version of Clerk, so signing in isn't available right now." The screenshot reference was aDIGeoU7ljdi; an earlier screenshot showed LqN1AAWF. The repository previously referenced ClerkJS v5. The current decision record describes a move to ClerkJS 6.43.1 + Clerk UI 1.42.4 / Core 3. Several commits have since modified the loader. **Do not assume the previous source patch fixed production. Reproduce and verify from the live production application.**
+
+Required actions, in order:
+
+1. Inspect the latest main commit and current contents of public/static/core.js, src/index.ts, src/lib/auth.ts, deployment configuration, and relevant auth tests. Inspect Git history for all recent Clerk-related changes. Identify the exact SDK URLs/versions and initialization API currently shipped.
+2. Open and follow current official Clerk JavaScript/Core 3 documentation and current minimum-ClerkJS protection documentation. Confirm package/CDN compatibility, required UI bundle, initialization order, supported public API, Frontend API domain, and production minimum version. Do not rely on memory or an old hard-coded snippet.
+3. Inspect actual production HTML and downloaded JavaScript assets, including cache headers and version query strings. Confirm whether production serves the newest commit or a stale deployment/cache. Compare deployed bundle to main.
+4. Diagnose the exact failure layer: old SDK bundle, incompatible UI/SDK pair, incorrect initialization, incorrect Frontend API hostname, publishable-key/instance mismatch, allowed origin, redirect/callback configuration, Google OAuth provider setup, CSP/bot protection, stale CDN/browser cache, or another verified cause. Do not label all authentication errors as an SDK issue.
+5. Implement the smallest complete correction. Use currently supported Clerk SDK/UI versions compatible with each other. Pin versions deliberately; avoid floating latest URLs. Preserve server-side RS256/JWKS validation, issuer/expiry/authorized-party checks, and workspace isolation. Do not weaken CSP or authentication controls merely to make the widget load.
+6. Check Clerk Production dashboard configuration using authorized access: correct Production instance, Frontend API/custom subdomain, production publishable/secret key pairing, allowed origins, sign-in/sign-up routes, redirect URLs, Google OAuth configuration and callback URI. Derive URLs from the actual deployed host; do not guess.
+7. Verify secret names/bindings in Cloudflare without printing secret values. Never request or paste a secret into a chat, issue, commit, log, screenshot, or prompt. If the owner supplies a key, direct them to enter it into the official Clerk or Cloudflare secret interface. Do not echo it back. Do not store keys in GitHub files.
+8. Add/update automated tests for auth token validation and regression coverage for the SDK loader/initialization where practical. Automated tests cannot substitute for a real browser OAuth test.
+9. Deploy corrected code to the intended Cloudflare Pages Production project sandar only after verifying the exact deployment target and owner authorization already provided by this prompt. Keep Rp0: do not enable paid features or change billing. Confirm deployment is Production, not Preview.
+10. Perform a real browser sign-in with the owner's authorized account, complete Google OAuth, return to SANDAR, verify a valid session is present, call a protected API successfully, and confirm sign-out works. Do not create test accounts or impersonate the owner without explicit permission. If the owner must complete an interactive OAuth or MFA step, stop at that exact step and give the shortest precise instruction.
+11. Test anonymous access denial, invalid/expired token denial, authenticated access, cross-user isolation, sign-out, and page reload/session restoration. Never claim login fixed based only on a page rendering or API health response.
+
+**Stage 1 acceptance gate — all must pass:**
+- Production deployment serves expected Clerk SDK/UI versions and initialization code.
+- Outdated-SDK warning is absent in a fresh browser session.
+- Production Google sign-in succeeds with an authorized human user, or exact owner-only interactive blocker is documented.
+- Resulting session is accepted by the server-side API.
+- Anonymous/invalid/expired sessions are denied and tenant isolation remains intact.
+- No secrets leaked; no unapproved charge.
+- README and decision log report exact evidence and remaining limitations.
+
+If Clerk Production cannot be completed because a credential, owner login, Google OAuth action, account permission, or cost approval is missing, mark Stage 1 BLOCKED, state the exact missing action, and continue only with independent safe tasks. Do not silently substitute Clerk Development, mock login, localStorage identity, or client-only auth.
+
+## Stage 2 — Mandatory premium, sophisticated UI/UX upgrade
+
+Begin this stage after Stage 1 is verified, or in parallel only for code/design work that cannot affect authentication and does not obscure the Stage 1 blocker. This stage is mandatory implementation work, not optional recommendations.
+
+### Design direction
+
+- Preserve SANDAR's recognizable deep-green identity, calm warm neutrals, restrained surfaces, clear typography, and respectful Indonesian voice.
+- Elevate visual craft: consistent spacing/type scales, strong hierarchy, deliberate whitespace, refined cards, clear focus/hover/pressed/disabled/loading/error states, responsive navigation, polished forms, empty states, skeleton/loading feedback, and coherent iconography.
+- Create a coherent design system with documented tokens for colour, typography, spacing, radius, borders, elevation, breakpoints, and interaction states. Use CSS variables/tokens rather than scattered one-off values.
+- Make mobile-first layouts genuinely usable at 360/390/430px, tablet 768px, laptop 1024px, and wide desktop. No squeezed multi-column content, overlapping nav, clipped actions, or tiny tap targets.
+- Accessibility is part of premium quality: semantic landmarks, heading order, keyboard navigation, visible focus, screen-reader labels/live announcements, colour contrast, 200% zoom/reflow, reduced motion, and touch targets. Target WCAG 2.2 AA; report actual checks rather than claiming certification.
+- Review all current routes and screenshots, not just homepage: public pages, catalogue, sign-in/sign-up, onboarding, private workspace, task creation, agent results, plans/progress, cash-flow, settings/privacy, and error/empty/loading states.
+- Use consistent Indonesian microcopy. Explain AI assistance clearly and avoid implying the system has human judgement, certainty, or authority it does not have.
+
+### Mandatory customer onboarding and end-to-end journey
+
+Implement and test a cohesive customer journey, not just an onboarding landing page:
+
+1. Discover: a first-time visitor understands what SANDAR does, who controls decisions, and what it does not do.
+2. Choose: the visitor chooses a goal/area without being forced to create a profile.
+3. Preview: explain what the selected flow can produce and what minimum inputs it needs.
+4. Account gate: request sign-in only when the user is about to save/use a private workspace capability. Preserve selected task/area/return URL through Clerk sign-in and OAuth.
+5. Context: ask only task-relevant, minimal questions. Allow unknown/skip when safe. Never demand sensitive identifiers or a full life history.
+6. Consent: explain storage, AI processing, and external web search separately at the moment each is needed. No preselected consent. A refusal must preserve a useful deterministic/no-AI path where possible.
+7. Agent orchestration: SANDAR Core routes to bounded specialist capabilities. Show task status and what each agent is doing in plain language; do not expose chain-of-thought or fabricate background activity.
+8. Result: present a polished, actionable result with user-provided facts, verified public-source facts, deterministic calculations, assumptions, uncertainty, and AI suggestions visibly distinguished.
+9. User review: allow edit, accept, reject, regenerate where safe, or discard. No consequential external action occurs automatically.
+10. Plan: save only what the user selects and only with storage consent. Make next steps, due dates, progress, and review controls clear.
+11. Return: make it easy to resume, review, revise, export, or delete. Explain what persists and what does not.
+
+Carry onboarding context safely through auth redirects. Do not put sensitive personal data in URL query strings, analytics, or browser logs. Validate all return paths against open redirects. Provide a useful public explore path without login.
+
+### Agentic SaaS experience
+
+- Present SANDAR Core as an orchestrator with bounded specialist capabilities, not an unrestricted autonomous agent.
+- Each specialist must have a clear purpose, allowed inputs, allowed tools/providers, output contract, safety boundaries, consent requirements, and fallback.
+- Provide transparent task states (preparing, asking a question, checking public sources, drafting, ready for review, failed/retryable). Only show states backed by actual execution.
+- Results must distinguish sources/citations, calculations, assumptions, and suggestions.
+- Provide a deterministic fallback when optional AI/search providers are absent, rate-limited, or fail.
+- Never expose private user context to providers by default. Require purpose-specific consent, minimization/redaction, and documented provider handling before any private data is sent externally.
+
+## Stage 3 — Provider architecture, responsibilities, credentials, and cost controls
+
+Create and maintain a clear provider capability matrix in the repository and operator-facing setup guide. A provider is not itself an agent. Agents are product capabilities/orchestration roles; providers are external infrastructure/tools used by selected capabilities.
+
+### Provider responsibility map
+
+| Provider | Intended role | Not intended for |
+|---|---|---|
+| **Groq** | LLM inference: generate/structure language-based assistance for SANDAR agents, summarization, drafting, clarification, using an approved model ID | Search engine, source-of-truth database, deterministic money calculator, auth, or eligibility authority |
+| **Tavily** | Public web search/discovery: find candidate public pages and recent information for Resource Navigator and explicitly consented public research tasks | Final authority, private account search, people profiling, or automatic catalogue verification |
+| **Firecrawl** | Selective extraction of public web pages into structured text for curator review, provenance capture, and source comparison | General unrestricted crawler, authenticated/private-page scraper, user surveillance, or automatic approval of government/benefit claims |
+| **Apify** | Optional Actor ecosystem for a specific, justified public-data extraction task only after reviewing Actor schema, terms, data source, pricing, limits, and permission | Always-on default dependency, bulk personal-data harvesting, or assumed free unlimited scraping |
+| **Scrape.ly** | Optional alternative extraction/monitoring candidate only if a concrete requirement and verified zero-cost/approved route exist | Mandatory dependency or duplicate scraper without demonstrated need |
+| **Cloudflare** | Hosting, server-side runtime, secrets, D1 data storage, routing, rate limits, and operational controls within verified plan limits | LLM reasoning or web search by itself |
+| **Clerk** | Authentication, session issuance, identity assertion, and auth lifecycle | Application authorization by itself; SANDAR API must still enforce workspace ownership |
+| **Payment gateway** | Future checkout/payment collection only after owner explicitly authorizes monetization and a provider/cost/compliance decision | Required for Free tier or prerequisite to use SANDAR MVP |
+
+### Required agent-to-provider mapping
+
+Build an explicit capability matrix, then implement only needed connections:
+- SANDAR Core / Orchestrator: deterministic routing and task state management in SANDAR backend; may call specialist adapters but does not need a separate external provider.
+- Financial Navigation: deterministic calculations in SANDAR code; Groq may help explain user-requested scenarios only with AI consent and minimized inputs. Groq must never calculate authoritative money totals.
+- Public Resource Navigator: Tavily may discover candidate official sources; Firecrawl may extract a selected public official page for curator review; original issuer remains source of truth.
+- Opportunity & Skills Navigator: Tavily may discover public learning/opportunity pages; Firecrawl may extract selected public pages for review; no scraping private profiles or people.
+- Future Resilience Planner: deterministic user-defined scenario/plan engine; Groq optional for language drafting with consent.
+- Wellbeing/Family capabilities: defer sensitive storage and avoid diagnosis, scoring, surveillance, or sharing by default.
+- Apify/Scrape.ly: no agent receives access by default. Add only after a written use case, privacy/terms review, verified price/limits, and owner approval.
+- Payments: keep BILLING_ENABLED=false and checkout disabled. Free tier remains usable without payment method. Do not select or integrate Midtrans/Xendit/Duitku/Faspay or another gateway merely because pricing was researched. A future gateway decision requires separate owner approval.
+
+### Credential handling and owner handoff
+
+The owner may provide credentials through approved secure provider interfaces. **Never ask the owner to paste secrets into ChatGPT, Genspark prompts, GitHub issues, commits, source files, screenshots, or logs.** If a key is shared in an insecure channel, do not repeat it; recommend rotation and re-entry through the official secret manager.
+
+Document these variable names only (never values):
+- GROQ_API_KEY
+- TAVILY_API_KEY
+- FIRECRAWL_API_KEY
+- CLERK_SECRET_KEY
+- CLERK_PUBLISHABLE_KEY (public client configuration; environment-specific and not a secret, but still use correct Production key)
+- CLERK_WEBHOOK_SECRET only if a verified webhook is implemented and required.
+
+For each provider, document:
+1. What feature/agent uses it.
+2. Which exact console creates the key and which permissions are required.
+3. Where it is stored (Cloudflare Pages/Workers secret or non-secret environment variable as appropriate).
+4. How to verify it without printing the key (redacted presence check and minimal health/test request).
+5. What user data is sent, what is explicitly excluded, and what consent is required.
+6. Free quota, rate/usage cap, retention/data policy, fallback, and what happens when quota is exhausted.
+7. How to rotate/revoke it safely.
+
+Never log provider request headers or key values. Never put server-side keys in browser JavaScript, public environment variables, HTML, source maps, or build output. Add per-provider kill switches and hard daily/monthly caps. If a key is missing, return a clear disabled state and continue with deterministic fallback.
+
+Suggested owner setup route (do not assume credentials exist):
+- Groq: owner creates/obtains an API key in Groq Console, then enters it directly into the authorized Cloudflare secret interface as GROQ_API_KEY.
+- Tavily: owner obtains a key in Tavily dashboard, then enters it directly into Cloudflare as TAVILY_API_KEY.
+- Firecrawl: owner obtains a key in Firecrawl dashboard, then enters it directly into Cloudflare as FIRECRAWL_API_KEY.
+- Clerk: owner configures Production keys and OAuth in Clerk Dashboard; server-side secret goes into Cloudflare secrets; publishable key is placed only in intended public production configuration. Do not request a key in chat.
+- Do not create accounts, change billing, add a payment method, or activate a paid plan without exact owner approval.
+
+## Stage 4 — Mandatory release implementation and evidence
+
+After stages 1–3:
+- Implement all safe, approved, zero-cost code/config/documentation changes. Do not leave premium UI, onboarding, provider mapping, or auth fixes as mere suggestions.
+- Run build, typecheck, unit/integration tests, and available browser/e2e checks. Add tests for newly changed paths.
+- Inspect actual deployed production app after deployment. Confirm expected asset versions, routes, auth, API, D1 bindings, and provider enabled/disabled states.
+- Run mobile/desktop responsive and accessibility checks. Capture screenshots only through authorized tools and never include secrets or personal user data.
+- Confirm sandar Pages project, Production branch/deployment, D1 binding, and custom domain independently. Do not infer them from repository config alone.
+- Keep custom domain and sandar.pages.dev deployment status separate if they resolve to different deployments.
+- Keep payments disabled and Free tier usable. No gateway integration or checkout activation is part of this authorization.
+- Keep default cost at Rp0. For any provider usage or infrastructure operation that may incur cost, verify official current pricing/remaining quota and stop before any non-zero or unclear charge.
+- Push implementation and documentation to GitHub main in focused commits if repository permissions allow. Preserve history; no force-push.
+- Update README, provider matrix, architecture decisions, release checklist, and remaining-risk register to match what is actually deployed.
+
+## Final acceptance report must answer
+
+1. Is Clerk Production Google sign-in actually successful in a real browser? What exact evidence proves it?
+2. Which SDK/UI versions are in production bundle? Does outdated-SDK error disappear?
+3. Does private API accept a valid session and reject anonymous/invalid/expired tokens?
+4. Which routes and onboarding steps were implemented and tested on mobile and desktop?
+5. Does customer journey preserve selected area through sign-in and into the correct task form?
+6. Which agents/capabilities call Groq, Tavily, or Firecrawl, and for exactly what purpose?
+7. Which provider keys are configured, absent, disabled, or tested? Never reveal values.
+8. Is Apify/Scrape.ly intentionally disabled? Is billing/payment gateway still off?
+9. What exact commit, production deployment ID, URL, tests, and responsive/accessibility evidence support the status?
+10. Did any operation incur a cost? Expected answer is Rp0 unless owner approved an exact spend in advance.
+
+**Do not mark SANDAR production-ready if Clerk sign-in is unverified, private authorization is untested, customer journey is broken, or production deployment is not inspected. Report each stage separately as PASS / BLOCKED / FAIL / NOT TESTED.**
