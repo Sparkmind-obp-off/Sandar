@@ -391,3 +391,190 @@ Report all of the following:
 - Every remaining blocker and the precise owner-only action.
 
 **Start executing now.** Audit current repository and connected accounts, implement, push to GitHub, configure the production stack, deploy to Cloudflare Production, and verify. Do not return only a plan.
+
+
+---
+
+# MANDATORY OWNER OVERRIDE — BUSINESS MODEL, LIVE AGENTIC SaaS, PRICING & PAYMENT READINESS
+
+This section is the owner's latest product and business direction. It supersedes any earlier wording that frames SANDAR as only a prototype, a static public-resource directory, a manual service business, or an AI demo. Build SANDAR as a usable, extensible, agentic SaaS product from the first release, while preserving the Rp0 spending guardrail.
+
+## 1. Business identity — fixed
+
+**Product/business name:** SANDAR  
+**Product category:** Agentic SaaS  
+**Product definition:** **SANDAR — Agentic Life Navigation & Resilience OS**  
+**Core promise:** Help people navigate real-life circumstances, understand available options, make informed choices, and turn those choices into practical, reviewable action plans.
+
+SANDAR is a self-service digital product, not a freelancer marketplace, not a consulting agency, not a human-operated service bureau, and not merely a chatbot. The software itself is the product. Human support, if ever introduced, must be explicitly separate and must not become a hidden operational dependency.
+
+The product must be inclusive across income levels and life circumstances. Never assume a user's income, employment, family structure, location, health, or needs. Collect only information voluntarily supplied for a clear purpose. Make sensitive areas optional and minimize or defer them.
+
+## 2. Product must be functional from the first usable release
+
+Do not deliver only a landing page, static directory, mock dashboard, disconnected chat UI, or nonfunctional agent cards. Implement a coherent end-to-end user journey:
+
+1. A visitor can understand SANDAR and explore public features without being forced to register.
+2. A user can start with low-friction onboarding, choose a goal or navigation area, and explicitly consent to any data persistence or AI processing.
+3. The user can describe a goal or situation in their own words, or use structured inputs.
+4. SANDAR Core routes the task to the appropriate capability/agent.
+5. The system returns practical options, relevant source links where applicable, assumptions, uncertainty, and next steps.
+6. The user can accept, edit, reject, save, or delete their plan.
+7. The user can review progress and revise the plan later.
+8. The application remains useful when an AI provider, search provider, or external integration is unavailable. Provide transparent fallback workflows instead of fake success.
+
+Build and test the actual flows, backend, persistence, authorization, error handling, and responsive UI. Do not represent a button as functional unless it performs the stated action.
+
+## 3. Agentic architecture — implement a real orchestrated system
+
+Build a modular agentic architecture with a single user-facing command center and clearly scoped specialist capabilities:
+
+- **SANDAR Core / Orchestrator:** understands the user's chosen objective, asks only necessary clarifying questions, plans tasks, routes work, tracks task state, and consolidates results.
+- **Life Navigation Agent:** helps structure a situation, clarify goals, compare options, identify constraints, and produce an actionable plan.
+- **Financial Navigation Agent:** supports budgeting, cash-flow understanding, financial option comparison, and public financial-resource discovery. It must not act as a financial adviser, promise outcomes, or make transactions.
+- **Public Resource Agent:** searches and organizes relevant public support programs, eligibility requirements, official sources, and application steps. Show source provenance, last-checked date, and uncertainty. Never infer eligibility as a fact.
+- **Opportunity & Skills Agent:** helps users explore learning paths, skills, jobs/opportunities, and practical next steps using verified public information.
+- **Resilience & Future Planning Agent:** helps users create contingency plans, milestones, and review routines without diagnosing or profiling them.
+- **Plan & Progress capability:** converts selected options into user-controlled tasks, milestones, optional reminders, and progress summaries.
+
+These can be implemented as modular workflows/tools coordinated by one orchestrator; do not create unnecessary independent model instances or continuously running agents. Each agent must have a defined input contract, output schema, allowed tools, prohibited actions, timeout, retry/fallback behavior, and audit events. Keep the architecture provider-agnostic.
+
+### Agentic execution requirements
+
+- Use a task state machine (queued, planning, awaiting_user_input, running, awaiting_approval, completed, failed, cancelled).
+- Make tool calls explicit, bounded, observable, and attributable to a user task.
+- Require confirmation before external side effects, submissions, purchases, messages, account changes, or sharing data.
+- Public-source lookup is read-only by default.
+- Do not scrape private accounts, profile named people, contact third parties, or infer personal circumstances.
+- Provide cancellation and deletion paths.
+- Display when content is AI-generated and distinguish verified facts, source-derived facts, estimates, and suggestions.
+- Never fabricate a source, application status, eligibility, result, or completed action.
+- No autonomous money movement, credit application, benefit application submission, job application submission, or medical/legal decision.
+
+## 4. Product modules and navigation
+
+Preserve SANDAR's established product pillars and implement a simple information architecture:
+
+1. **Home / Command Center** — overview, active goals, recommended next step, task status.
+2. **Life Navigation** — goal and situation structuring, options, decision support.
+3. **Financial Relief & Planning** — user-controlled budgeting and public resource discovery.
+4. **Public Support / Resource Navigator** — official programs and public services.
+5. **Opportunity & Skills** — learning and opportunity pathways.
+6. **Resilience & Future Planning** — contingency planning and progress reviews.
+7. **My Plans** — saved plans, milestones, history, and deletion controls.
+8. **Settings & Privacy** — consent, connected providers (if any), export, retention, and account controls.
+
+Family Balance and Wellbeing & Capacity must remain optional, consent-based, minimal, and safely scoped; do not expand into diagnosis, therapy, or sensitive profiling. Do not let the number of modules compromise the first end-to-end journey.
+
+## 5. SaaS business model and monetization — design now, activate only when approved
+
+Business model: **Freemium Agentic SaaS**, with a future organization/B2B tier. The Free tier is a real usable product, not a crippled teaser. Paid plans must sell additional convenience, capacity, collaboration, history, and workflow depth — never access to essential safety information or public support resources.
+
+Implement a centralized plan/entitlement model in code/configuration, not scattered hardcoded checks. Include plan IDs, feature entitlements, quotas, usage metering, billing status, grace period, cancellation, upgrade/downgrade, and audit events. The system must work with billing disabled and default every new account to Free.
+
+### Initial Indonesia pricing hypothesis
+
+Use these launch hypotheses unless actual cost modelling or owner-approved research shows they are unsustainable. Keep them editable through one pricing configuration and admin control; do not hardwire amounts throughout the application.
+
+- **Free — Rp0/month:** core navigation, public-resource discovery, basic plans, limited AI assistance/usage, basic progress tracking. Preserve a useful no-AI fallback.
+- **Plus Monthly — Rp29.000/month:** higher fair-use AI/task capacity, deeper plan analysis, longer plan history, more active plans, and enhanced progress reviews.
+- **Plus Annual — Rp290.000/year:** equivalent to two months free compared with twelve monthly payments; show the saving transparently.
+- **Organization — contact sales / custom quote:** multi-seat workspace, role-based administration, organization-level program/resource navigation, and privacy-preserving aggregate reporting. Do not publish a fixed B2B price until interviews and delivery-cost evidence support it.
+
+These prices are hypotheses for product design and validation, not a claim that customers will pay them. Before enabling checkout, calculate net revenue after payment fees and applicable taxes, AI/search/storage costs, refunds/chargebacks, and operational overhead. Test sustainable usage limits. Do not promise unlimited AI. Show renewal, billing period, cancellation terms, taxes/fees, and what happens when a quota is exhausted.
+
+### Pricing and cost transparency
+
+- Show a clear plan comparison and an understandable usage meter.
+- Set conservative Free and Plus quotas based on measured provider costs, not arbitrary marketing claims.
+- Prefer model/provider routing, caching, deterministic workflows, and user-triggered AI over background agent loops.
+- Do not consume paid API credits in the background.
+- Alert the user before any paid add-on or overage; never silently charge.
+- If all AI credits are exhausted, keep non-AI navigation, saved plans, public directory, and manual workflows available.
+- Do not launch paid plans until the owner explicitly approves live billing and the selected payment gateway has passed sandbox and production verification.
+
+## 6. Payment gateway — build an adapter, compare providers, do not lock in prematurely
+
+SANDAR must be payment-ready from the architecture stage, but payment processing must remain disabled until the owner approves provider onboarding, commercial terms, account verification, credentials, and any cost.
+
+Implement a provider-neutral Payment Gateway Adapter and Billing domain. Compare at minimum Duitku, Midtrans, Xendit, and Faspay. Add another Indonesian provider only if it has a clear advantage and official pricing/terms can be verified.
+
+Do not assume any prior test or integration in another project means SANDAR has a working payment account or production integration. Do not copy credentials, merchant IDs, callbacks, or account data from another business/project.
+
+### Required provider evaluation
+
+For each candidate verify current official information for:
+- registration/setup/monthly/maintenance fees;
+- QRIS MDR and gateway fee, and whether the quoted rate includes VAT;
+- virtual account fees by bank;
+- e-wallet fees by provider and merchant category;
+- cards, retail outlets, refunds, chargebacks, settlement and payout fees;
+- minimum transaction, reserves, settlement timing, account eligibility and required legal/business documents;
+- recurring billing/subscription support, tokenization or payment-link limitations;
+- terms for SaaS, digital services, subscriptions, and the SANDAR business category.
+
+Create **docs/33-payment-gateway-evaluation.md** (or update an equivalent existing document) with a dated comparison table, direct official source URLs, assumptions, tax notes, missing/uncertain facts, and a recommendation. Re-check official provider pricing immediately before a real onboarding decision; search snippets are not sufficient evidence.
+
+### Payment implementation requirements
+
+- Use a clean internal billing interface so provider can be swapped without rewriting plans, entitlements, or account logic.
+- Create checkout sessions server-side only.
+- Verify webhook signatures and event authenticity server-side.
+- Implement idempotent webhook processing, replay protection, payment state transitions, invoice/receipt references, reconciliation, refund state, and audit trail.
+- Never trust browser redirect success as proof of payment.
+- Never expose secret keys or webhook secrets in frontend code, logs, Git, or client-visible errors.
+- Keep test/sandbox and production credentials strictly separated.
+- Do not store card numbers or CVV.
+- Do not enable recurring charges unless provider terms and user consent support them; provide cancellation and renewal disclosure.
+- If gateway onboarding needs a paid fee, bank/payment method, legal document, or owner action, stop before commitment and report the exact requirement.
+- Default billing feature flag to OFF. Default account plan to Free. Never initiate a real charge in development or testing.
+
+## 7. Rp0 guardrail remains absolute
+
+The owner wants to build a business without injecting money at this stage. Therefore:
+- No paid subscription, paid trial, usage-based paid API, credit purchase, payment method addition, paid domain add-on, or paid gateway onboarding without explicit approval.
+- No background task may create billable usage.
+- Prefer genuinely free tiers, local/deterministic processing, public information, and optional user-provided BYOK where safe.
+- Never imply that "free signup" means free transactions or free API usage.
+- Verify current plan limits and pricing from official provider sources before selecting a dependency.
+- If a capability cannot be delivered at Rp0, implement a safe limited/fallback mode and record the blocker. Do not silently remove the Rp0 constraint.
+
+## 8. Security, privacy, and user trust
+
+- Data minimization, explicit consent, purpose limitation, access controls, export and deletion.
+- Private workspace data must be isolated by user/organization at every server-side query and mutation.
+- Do not send personal or sensitive user data to third-party AI/search services by default. Redact/minimize context and disclose provider processing when enabled.
+- Never use user data for advertising, sale, or unrelated model training.
+- Provide source links, timestamps, and confidence/uncertainty for public resource results.
+- Do not guarantee benefit eligibility, employment, income, financial recovery, or personal outcomes.
+- Add rate limits, abuse controls, safe error handling, and security tests.
+- Provide privacy/terms drafts for owner/legal review; do not label them legally approved.
+
+## 9. Required documentation and deliverables
+
+Inspect the current repository and preserve existing documents. Add/update the following as needed:
+- **docs/32-implementation-decisions.md** — architecture and trade-offs.
+- **docs/33-payment-gateway-evaluation.md** — current official provider comparison and recommendation.
+- **docs/34-business-model-and-pricing.md** — Freemium model, pricing hypotheses, entitlements, quota economics, unit-economics assumptions, validation plan.
+- **docs/35-agentic-product-architecture.md** — orchestrator, specialist agents, contracts, task state machine, tools, safety boundaries, fallback.
+- **docs/36-launch-and-validation-plan.md** — first-user journey, product metrics, retention, pricing tests, launch gates.
+- Update README and existing specs so product identity consistently reads **SANDAR — Agentic Life Navigation & Resilience OS**.
+- Implement the actual app, not documentation alone. Keep documentation aligned with shipped behavior.
+
+## 10. Required acceptance gates
+
+Do not report SANDAR as production-ready unless all applicable evidence exists:
+1. Real end-to-end user journey works in the deployed app.
+2. Core navigation and specialist workflows return structured, useful results.
+3. Provider outage/credit exhaustion fallback works.
+4. Authentication, authorization, tenant isolation, consent, export, and deletion are tested.
+5. No paid service or billable action was activated without approval.
+6. Free plan is usable and its limits are enforced server-side.
+7. Pricing is configurable and clearly labelled as a hypothesis until validated.
+8. Payment adapter is tested with mocks/sandbox; live payments remain OFF until explicit owner approval.
+9. Official gateway pricing evaluation has source URLs and date; uncertain terms are clearly marked.
+10. Production Pages project name is exactly **sandar**, production URL is exactly **https://sandar.pages.dev**, and actual deployment/health checks pass.
+11. GitHub changes are pushed to **main** with focused commits; no force push.
+12. Report what is implemented, what is tested, what is deployed, what remains blocked, and any owner action required.
+
+**Start executing this updated business/product direction now.** Do not respond with another concept-only proposal. Inspect the live repository, reconcile all existing specs, implement the functional agentic SaaS MVP, update the required docs, run available checks, push to **main**, and deploy to the exact Cloudflare Pages production target when authorized access and zero-cost conditions permit. Billing must remain OFF unless the owner separately approves activation.
