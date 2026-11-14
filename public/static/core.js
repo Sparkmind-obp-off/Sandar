@@ -221,45 +221,87 @@
   S.route('/', async (v) => {
     S.setTitle('')
     v.innerHTML = `
-      <section class="hero" aria-labelledby="hero-title">
-        <h1 id="hero-title">Langkah berikutnya, lebih jelas.</h1>
-        <p class="lead">SANDAR membantu Anda menata situasi, melihat pilihan, dan menyusun rencana yang bisa Anda ubah kapan saja — tanpa menilai Anda dan tanpa mengambil kendali.</p>
-        <div class="trust" role="note">
-          <strong>Privasi & kendali di tangan Anda.</strong>
-          SANDAR tidak mengetahui keadaan Anda, tidak menebak penghasilan atau kelayakan, dan tidak mengirim apa pun atas nama Anda. Anda memilih apa yang disimpan, dan bisa mengekspor atau menghapusnya.
+      <section class="hero hero-home" aria-labelledby="hero-title">
+        <div class="hero-copy">
+          <span class="eyebrow">SANDAR · LIFE NAVIGATION & RESILIENCE</span>
+          <h1 id="hero-title">Saat hidup berubah, temukan langkah berikutnya.</h1>
+          <p class="lead">Ruang bantu untuk menata keadaan, memahami pilihan, dan menyusun langkah yang masuk akal — dengan keputusan tetap di tangan Anda.</p>
+          <div class="row hero-actions">
+            <a class="btn" href="/mulai" data-link>Mulai perjalanan</a>
+            <a class="btn secondary" href="/jelajahi" data-link>Jelajahi tanpa akun</a>
+          </div>
+          <p class="small muted hero-note">Tidak perlu mengisi profil. Mulai dari satu hal yang ingin Anda urus.</p>
         </div>
-        <div class="row">
-          <a class="btn" href="${S.signedIn() ? '/ruang/tugas/baru' : '/masuk?next=/ruang/tugas/baru'}" data-link>Mulai dengan satu tujuan</a>
-          <a class="btn secondary" href="/jelajahi" data-link>Jelajahi sumber resmi tanpa akun</a>
+        <aside class="hero-panel" aria-label="Prinsip SANDAR">
+          <span class="hero-panel-mark" aria-hidden="true">S</span>
+          <p class="hero-panel-title">Anda memegang kendali.</p>
+          <p class="small">SANDAR membantu memetakan pilihan. Anda yang menentukan apa yang ingin dicoba, disimpan, atau diubah.</p>
+          <ul class="hero-points">
+            <li>Privasi berdasarkan persetujuan</li>
+            <li>Fakta dan saran dibedakan</li>
+            <li>Tetap berguna tanpa AI</li>
+          </ul>
+        </aside>
+      </section>
+
+      <section class="journey-section" aria-labelledby="journey-title">
+        <div class="section-heading">
+          <div><span class="eyebrow">MULAI DARI KEBUTUHAN ANDA</span><h2 id="journey-title">Apa yang ingin Anda urus lebih dulu?</h2></div>
+          <p class="muted small">Pilih satu. Anda bisa berpindah area kapan saja.</p>
+        </div>
+        <div class="grid journey-grid">
+          <a class="card task journey-card" href="/mulai?area=finance" data-link><span class="icon" aria-hidden="true">↗</span><span class="card-kicker">KEUANGAN</span><h3>Memahami arus uang</h3><span class="small muted">Petakan pemasukan, pengeluaran, dan beberapa skenario sederhana. Bisa mencoba tanpa akun.</span><span class="card-link">Mulai dari sini <span aria-hidden="true">→</span></span></a>
+          <a class="card task journey-card" href="/mulai?area=resources" data-link><span class="icon" aria-hidden="true">⌂</span><span class="card-kicker">SUMBER PUBLIK</span><h3>Menemukan layanan resmi</h3><span class="small muted">Jelajahi sumber pemerintah dan layanan publik dengan status pemeriksaan yang jelas.</span><span class="card-link">Jelajahi sumber <span aria-hidden="true">→</span></span></a>
+          <a class="card task journey-card" href="/mulai?area=opportunity" data-link><span class="icon" aria-hidden="true">✳</span><span class="card-kicker">PELUANG & KETERAMPILAN</span><h3>Menentukan arah berikutnya</h3><span class="small muted">Susun jalur belajar dan cari peluang dari informasi publik.</span><span class="card-link">Lihat pilihan <span aria-hidden="true">→</span></span></a>
+          <a class="card task journey-card" href="/mulai?area=resilience" data-link><span class="icon" aria-hidden="true">⌁</span><span class="card-kicker">KETAHANAN</span><h3>Membuat rencana ke depan</h3><span class="small muted">Pecah tujuan menjadi langkah kecil dan siapkan alternatif bila keadaan berubah.</span><span class="card-link">Susun rencana <span aria-hidden="true">→</span></span></a>
         </div>
       </section>
-      <section aria-labelledby="tasks-title">
-        <h2 id="tasks-title">Apa yang ingin Anda urus lebih dulu?</h2>
-        <div class="grid">
-          <a class="card task" href="/coba/arus-uang" data-link><span class="icon" aria-hidden="true">💧</span><h3>Atur arus uang</h3><span class="small muted">Lihat pemasukan dan pengeluaran dari angka yang Anda masukkan. Bisa dicoba tanpa akun.</span></a>
-          <a class="card task" href="/jelajahi?kind=resource" data-link><span class="icon" aria-hidden="true">🏛️</span><h3>Cari layanan/sumber resmi</h3><span class="small muted">Tautan ke penerbit resmi, lengkap dengan status pemeriksaan.</span></a>
-          <a class="card task" href="/jelajahi?kind=opportunity" data-link><span class="icon" aria-hidden="true">🌱</span><h3>Jelajahi peluang</h3><span class="small muted">Jalur belajar dan peluang kerja dari sumber publik.</span></a>
-          <a class="card task" href="${S.signedIn() ? '/ruang/tugas/baru?area=resilience' : '/masuk?next=/ruang/tugas/baru'}" data-link><span class="icon" aria-hidden="true">🧭</span><h3>Buat rencana ke depan</h3><span class="small muted">Rencana cadangan dan tonggak kecil yang Anda tentukan sendiri.</span></a>
-        </div>
-      </section>
-      <section aria-labelledby="how-title">
-        <h2 id="how-title">Cara kerja</h2>
+
+      <section class="journey-flow" aria-labelledby="flow-title">
+        <div class="section-heading"><div><span class="eyebrow">ALUR YANG SEDERHANA</span><h2 id="flow-title">Dari kebingungan menuju langkah yang bisa dilakukan.</h2></div></div>
         <ol class="steps-howto">
-          <li><h3>Pilih satu tujuan</h3><p class="small">Tulis dengan kata-kata Anda sendiri, atau pilih area. Tidak perlu mengisi profil.</p></li>
-          <li><h3>SANDAR menata pilihan</h3><p class="small">Agen spesialis menyusun pilihan, sumber, perhitungan, dan asumsi — dipisahkan dengan jelas.</p></li>
-          <li><h3>Anda yang memutuskan</h3><p class="small">Terima, ubah, atau buang. Simpan sebagai rencana dan tinjau kemajuannya kapan saja.</p></li>
+          <li><span class="step-label">01 · CERITAKAN</span><h3>Mulai dari tujuan Anda</h3><p class="small muted">Tulis dengan kata-kata sendiri atau pilih area. Tidak perlu membuat profil lengkap.</p></li>
+          <li><span class="step-label">02 · PETAKAN</span><h3>SANDAR membantu menata</h3><p class="small muted">Core mengarahkan tugas ke kapabilitas yang sesuai, menyusun opsi, sumber, asumsi, dan pertanyaan seperlunya.</p></li>
+          <li><span class="step-label">03 · TENTUKAN</span><h3>Pilih langkah Anda</h3><p class="small muted">Tinjau hasil, ubah atau abaikan saran, lalu simpan rencana jika Anda menginginkannya.</p></li>
+          <li><span class="step-label">04 · TINJAU</span><h3>Lanjutkan sesuai keadaan</h3><p class="small muted">Kembali untuk melihat kemajuan dan menyesuaikan rencana. Tidak ada keputusan yang diambil atas nama Anda.</p></li>
         </ol>
       </section>
-      <section aria-labelledby="limits-title">
-        <h2 id="limits-title">Batasan yang kami jaga</h2>
-        <ul>
-          <li>Tidak menentukan kelayakan bantuan atau menjanjikan hasil.</li>
-          <li>Tidak memberi nasihat keuangan, hukum, pajak, atau medis.</li>
-          <li>Tidak mengirim lamaran, pembayaran, atau pesan atas nama Anda.</li>
-          <li>Tidak memprofilkan orang dan tidak menjual data.</li>
-        </ul>
-        <p class="small muted">Dalam keadaan darurat, hubungi 112 atau layanan profesional setempat.</p>
+
+      <section class="trust trust-wide" aria-label="Privasi dan batasan">
+        <div><span class="eyebrow">PRIVASI & KENDALI</span><h2>Data Anda bukan harga untuk mendapatkan bantuan.</h2><p class="small">Anda memilih apa yang disimpan dan apakah bantuan AI atau pencarian eksternal digunakan. Anda dapat mengekspor atau menghapus data ruang kerja.</p></div>
+        <ul class="small"><li>Tidak menebak penghasilan atau kelayakan.</li><li>Tidak menjual data atau membuat profil orang.</li><li>Tidak mengirim lamaran, pembayaran, atau pesan atas nama Anda.</li><li>Informasi publik tetap dapat dijelajahi tanpa akun.</li></ul>
       </section>`
+  })
+
+  S.route('/mulai', async (v) => {
+    S.setTitle('Mulai perjalanan')
+    const qs = new URLSearchParams(location.search)
+    const area = qs.get('area') || ''
+    const labels = { life: 'Menata situasi dan pilihan', finance: 'Memahami arus uang', resources: 'Menemukan sumber dan layanan publik', opportunity: 'Menjelajahi peluang dan keterampilan', resilience: 'Membuat rencana ke depan' }
+    const cards = [
+      ['life','Menata situasi','Uraikan hal yang ingin Anda bereskan dan petakan beberapa pilihan.','◎'],
+      ['finance','Arus uang','Lihat pemasukan, pengeluaran, dan skenario sederhana.','↗'],
+      ['resources','Sumber publik','Telusuri layanan resmi dan persyaratan dari penerbitnya.','⌂'],
+      ['opportunity','Peluang & keterampilan','Susun jalur belajar atau eksplorasi peluang.','✳'],
+      ['resilience','Rencana ke depan','Buat langkah kecil dan pilihan cadangan.','⌁'],
+    ]
+    const chosen = labels[area] ? area : 'life'
+    const next = '/ruang/tugas/baru?area=' + encodeURIComponent(chosen)
+    v.innerHTML = `
+      <div class="onboarding-wrap">
+        <a class="back-link" href="/" data-link>← Kembali ke beranda</a>
+        <div class="onboarding-heading"><span class="eyebrow">MULAI DENGAN RINGAN</span><h1>Hal apa yang ingin Anda buat lebih jelas?</h1><p class="lead">Pilih titik awal. Tidak ada jawaban yang salah dan Anda tidak perlu menceritakan semuanya sekaligus.</p></div>
+        <div class="onboarding-progress" aria-label="Langkah 1 dari 3"><span class="active"></span><span></span><span></span></div>
+        <p class="small muted">LANGKAH 1 DARI 3 · PILIH AREA</p>
+        <div class="grid onboarding-grid">
+          ${cards.map(([key,title,desc,icon]) => `<a class="card task onboarding-choice ${chosen===key?'selected':''}" href="/mulai?area=${key}" data-link ${chosen===key?'aria-current="true"':''}><span class="icon" aria-hidden="true">${icon}</span><h3>${title}</h3><span class="small muted">${desc}</span><span class="choice-indicator" aria-hidden="true">${chosen===key?'✓':'+'}</span></a>`).join('')}
+        </div>
+        <div class="onboarding-next card">
+          <div><span class="eyebrow">AREA TERPILIH</span><h2>${labels[chosen]}</h2><p class="small muted">Berikutnya Anda dapat menuliskan tujuan dengan kata-kata sendiri. Akun diperlukan saat menggunakan Ruang Saya untuk menyimpan dan melanjutkan rencana.</p></div>
+          <div class="row"><a class="btn" href="/masuk?next=${encodeURIComponent(next)}" data-link>Lanjutkan <span aria-hidden="true">→</span></a><a class="btn secondary" href="/jelajahi" data-link>Jelajahi tanpa akun</a></div>
+        </div>
+        <p class="small muted onboarding-privacy">Privasi: jangan masukkan NIK, kata sandi, nomor rekening, atau data sensitif. Persetujuan penyimpanan dan pemrosesan AI akan dijelaskan terpisah.</p>
+      </div>`
   })
 
   S.route('/jelajahi', async (v) => {
