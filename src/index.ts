@@ -51,15 +51,17 @@ const shell = (clerkPk: string | undefined) => `<!doctype html>
 <meta name="sandar-clerk-pk" content="${(clerkPk || '').replace(/[^A-Za-z0-9_$-]/g, '')}">
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
 <link rel="manifest" href="/static/manifest.webmanifest">
-<link rel="stylesheet" href="/static/styles.css?v=clerk6-20261115a">
+<link rel="preload" href="/static/fonts/inter-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/static/fonts/fraunces-var.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/static/styles.css?v=ds2-20261115b">
 </head>
 <body>
 <a class="skip-link" href="#main">Lewati ke konten utama</a>
 <div id="root"><noscript><p style="padding:1rem">SANDAR memerlukan JavaScript. Katalog sumber publik juga tersedia melalui <a href="/api/v1/catalogue/resources">API publik</a>.</p></noscript></div>
 <div id="live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-<script src="/static/core.js?v=clerk6-20261115a" defer></script>
-<script src="/static/ruang.js?v=clerk6-20261115a" defer></script>
-<script src="/static/app.js?v=clerk6-20261115a" defer></script>
+<script src="/static/core.js?v=ds2-20261115b" defer></script>
+<script src="/static/ruang.js?v=ds2-20261115b" defer></script>
+<script src="/static/app.js?v=ds2-20261115b" defer></script>
 </body>
 </html>`
 

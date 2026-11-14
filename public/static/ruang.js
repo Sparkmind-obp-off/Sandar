@@ -20,8 +20,8 @@
   const shell = (active, inner) => `
     <div class="sidebar-layout">
       <aside class="sidebar" aria-label="Menu Ruang Saya"><nav><ul>
-        ${[['/ruang', 'Pusat Komando'], ['/ruang/tugas/baru', 'Tujuan baru'], ['/ruang/rencana', 'Rencana Saya'], ['/ruang/arus-uang', 'Arus Uang'], ['/ruang/tujuan', 'Tujuan'], ['/ruang/riwayat', 'Riwayat tugas']]
-          .map(([h, l]) => `<li><a href="${h}" data-link ${active === h ? 'aria-current="page"' : ''}>${l}</a></li>`).join('')}
+        ${[['/ruang', 'Pusat Komando', '◎'], ['/ruang/tugas/baru', 'Tujuan baru', '＋'], ['/ruang/rencana', 'Rencana Saya', '☰'], ['/ruang/arus-uang', 'Arus Uang', '↗'], ['/ruang/tujuan', 'Tujuan', '◇'], ['/ruang/riwayat', 'Riwayat tugas', '↺'], ['/pengaturan', 'Privasi & data', '⚙']]
+          .map(([h, l, i]) => `<li><a href="${h}" data-link ${active === h ? 'aria-current="page"' : ''}><span class="nav-ico" aria-hidden="true">${i}</span>${l}</a></li>`).join('')}
       </ul></nav></aside>
       <section>${inner}</section>
     </div>`
@@ -49,57 +49,74 @@
     const next = active.find((p) => p.step_count > p.done_count)
     const u = w.usage
     const meter = (k, label) => { const used = u.used[k], lim = u.limits[k], pct = lim ? Math.min(100, Math.round((used / lim) * 100)) : 100; return `<div class="meter"><div class="row small"><span>${label}</span><span class="muted" style="margin-left:auto">${used} / ${lim}</span></div><div class="progress" role="progressbar" aria-label="${label}" aria-valuemin="0" aria-valuemax="${lim}" aria-valuenow="${used}"><span style="width:${pct}%"></span></div></div>` }
+    const hour = new Date().getHours()
+    const greet = hour < 11 ? 'Selamat pagi' : hour < 15 ? 'Selamat siang' : hour < 19 ? 'Selamat sore' : 'Selamat malam'
     v.innerHTML = shell('/ruang', `
-      <h1>Pusat Komando</h1>
-      <p class="muted">Paket: <strong>${esc(w.plan.name)}</strong> · Periode kuota ${esc(u.period)}</p>
+      <div class="ws-head"><div><span class="eyebrow">${greet}</span><h1>Pusat Komando</h1></div>
+        <div class="row"><span class="badge neutral">Paket ${esc(w.plan.name)}</span><a class="btn small-btn" href="/ruang/tugas/baru" data-link>＋ Tujuan baru</a></div></div>
       ${consentGate(w, 'workspace_storage', '/ruang')}
-      <div class="grid">
-        <div class="card"><h2 style="margin-top:0;font-size:1.15rem">Langkah berikutnya</h2>
-          ${next ? `<p><strong>${esc(next.title)}</strong></p><p class="small muted">${next.done_count} dari ${next.step_count} langkah selesai</p><a class="btn" href="/ruang/rencana/${esc(next.id)}" data-link>Lanjutkan rencana</a>` : `<p class="small">Belum ada rencana aktif. Mulai dari satu tujuan.</p><a class="btn" href="/ruang/tugas/baru" data-link>Tulis tujuan</a>`}
-        </div>
-        <div class="card"><h2 style="margin-top:0;font-size:1.15rem">Ringkasan</h2>
-          <dl class="kv"><dt>Rencana aktif</dt><dd>${w.counts.active_plans}</dd><dt>Tujuan</dt><dd>${w.counts.goals}</dd><dt>Entri arus uang</dt><dd>${w.counts.cash_flow_items}</dd></dl></div>
-        <div class="card"><h2 style="margin-top:0;font-size:1.15rem">Pemakaian bulan ini</h2>${meter('agent_runs', 'Tugas agen')}${meter('ai_assist', 'Bantuan AI')}${meter('external_search', 'Pencarian web')}
-          <p class="small muted">Saat kuota habis, rencana, katalog, dan perhitungan tetap bisa dipakai.</p></div>
+      <div class="dash-grid">
+        <section class="card next-card" aria-labelledby="nx-h"><span class="eyebrow" style="color:rgba(255,255,255,.7)">Langkah berikutnya</span>
+          ${next ? `<h2 id="nx-h" style="margin:.4rem 0 .3rem;font-size:1.35rem">${esc(next.title)}</h2><p class="small">${next.done_count} dari ${next.step_count} langkah selesai</p><div class="progress" style="background:rgba(255,255,255,.15);margin:.6rem 0 1rem" role="progressbar" aria-label="Kemajuan rencana" aria-valuemin="0" aria-valuemax="${next.step_count}" aria-valuenow="${next.done_count}"><span style="width:${Math.round(next.done_count / next.step_count * 100)}%;background:#fff"></span></div><a class="btn" href="/ruang/rencana/${esc(next.id)}" data-link>Lanjutkan rencana →</a>`
+            : `<h2 id="nx-h" style="margin:.4rem 0 .3rem;font-size:1.35rem">Mulai dari satu tujuan</h2><p class="small">Tulis apa yang ingin Anda urus. SANDAR menyusun pilihan yang bisa Anda ubah.</p><a class="btn" href="/ruang/tugas/baru" data-link>Tulis tujuan →</a>`}
+        </section>
+        <section class="card" aria-labelledby="sm-h"><h2 class="panel-title" id="sm-h">Ringkasan</h2>
+          <div class="grid" style="grid-template-columns:repeat(3,1fr);gap:.5rem;text-align:left">
+            <div><div class="stat">${w.counts.active_plans}</div><div class="small muted">Rencana aktif</div></div>
+            <div><div class="stat">${w.counts.goals}</div><div class="small muted">Tujuan</div></div>
+            <div><div class="stat">${w.counts.cash_flow_items}</div><div class="small muted">Entri uang</div></div>
+          </div></section>
+        <section class="card" aria-labelledby="us-h"><h2 class="panel-title" id="us-h">Pemakaian ${esc(u.period)}</h2>${meter('agent_runs', 'Tugas agen')}${meter('ai_assist', 'Bantuan AI')}${meter('external_search', 'Pencarian web')}
+          <p class="small muted" style="margin:0">Saat kuota habis, rencana, katalog, dan perhitungan tetap bisa dipakai.</p></section>
       </div>
-      <h2>Tugas terbaru</h2>
-      ${w.recent_tasks.length ? `<ul>${w.recent_tasks.map((t) => `<li><a href="/ruang/tugas/${esc(t.id)}" data-link>${esc(t.objective)}</a> <span class="badge neutral">${esc(AREAS[t.area] || t.area)}</span> <span class="badge ${t.status === 'completed' ? 'ok' : t.status === 'failed' ? 'bad' : 'warn'}">${esc(STATUS[t.status] || t.status)}</span></li>`).join('')}</ul>` : '<p class="muted">Belum ada tugas.</p>'}`)
+      <section class="card" style="margin-top:1rem" aria-labelledby="rt-h"><div class="row" style="justify-content:space-between"><h2 class="panel-title" id="rt-h" style="margin:0">Tugas terbaru</h2><a class="small" href="/ruang/riwayat" data-link>Lihat semua</a></div>
+      ${w.recent_tasks.length ? `<ul class="task-list">${w.recent_tasks.map((t) => `<li><a href="/ruang/tugas/${esc(t.id)}" data-link>${esc(t.objective)}</a><span class="badge neutral">${esc(AREAS[t.area] || t.area)}</span><span class="badge ${t.status === 'completed' ? 'ok' : t.status === 'failed' ? 'bad' : 'warn'}">${esc(STATUS[t.status] || t.status)}</span></li>`).join('')}</ul>` : '<div class="empty" style="margin-top:.8rem"><h3>Belum ada tugas</h3><p class="small" style="margin:0">Tugas yang Anda mulai akan muncul di sini.</p></div>'}</section>`)
   }, { auth: true })
 
   // ---------- New task (orchestrator) ----------
   S.route('/ruang/tugas/baru', async (v) => {
     S.setTitle('Tujuan baru')
     const w = await ws()
-    const preset = new URLSearchParams(location.search).get('area') || ''
+    const it = S.intent.get()
+    const preset = new URLSearchParams(location.search).get('area') || (it && it.area) || ''
+    const has = (p) => w.consents.includes(p)
+    const toggle = (p, label, desc) => `<div class="layer" style="margin:.5rem 0"><label class="choice" style="font-weight:600"><input type="checkbox" data-optin="${p}" ${has(p) ? 'checked' : ''}> ${label}</label><p class="small muted" style="margin:.2rem 0 0 1.9rem">${desc}</p></div>`
     v.innerHTML = shell('/ruang/tugas/baru', `
-      <h1>Apa yang ingin Anda urus?</h1>
-      <p class="lead">Tulis dengan kata-kata Anda sendiri. SANDAR Core akan mengarahkan ke agen yang sesuai dan menanyakan hanya yang perlu.</p>
-      ${consentGate(w, 'workspace_storage', '/ruang/tugas/baru')}
+      <div class="ws-head"><div><span class="eyebrow">SANDAR CORE</span><h1>Apa yang ingin Anda urus?</h1></div></div>
+      <p class="lead" style="margin-top:-.5rem">Tulis dengan kata-kata Anda sendiri. SANDAR Core mengarahkan ke agen yang sesuai dan hanya menanyakan yang perlu.</p>
       <form id="task-form" class="card" novalidate>
-        <div class="field"><label for="objective">Tujuan atau situasi</label>
-          <textarea id="objective" maxlength="500" required aria-describedby="obj-h"></textarea>
-          <span id="obj-h" class="hint">Contoh: “Saya ingin merapikan pengeluaran bulanan” atau “Saya ingin belajar keterampilan digital”. Jangan tulis NIK, nomor rekening, alamat, atau data kesehatan.</span></div>
-        <div class="field"><label for="area">Area (opsional)</label>
+        <div class="field" style="max-width:none"><label for="objective">Tujuan atau situasi</label>
+          <textarea id="objective" maxlength="500" required aria-describedby="obj-h">${esc((it && it.objective) || '')}</textarea>
+          <span id="obj-h" class="hint">Contoh: “Saya ingin merapikan pengeluaran bulanan”. Jangan tulis NIK, nomor rekening, alamat, atau data kesehatan.</span></div>
+        <div class="field"><label for="area">Area</label>
           <select id="area"><option value="">Biarkan SANDAR memilih</option>${Object.entries(AREAS).map(([k, l]) => `<option value="${k}" ${preset === k ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
-        <fieldset><legend>Bantuan tambahan (opsional)</legend>
-          <label class="choice"><input type="checkbox" id="use_ai" ${w.consents.includes('ai_processing') ? '' : 'disabled'}> Gunakan bantuan AI (Groq) ${w.consents.includes('ai_processing') ? '' : '<span class="small muted">— aktifkan persetujuan di Pengaturan</span>'}</label>
-          <label class="choice"><input type="checkbox" id="use_search" ${w.consents.includes('external_search') ? '' : 'disabled'}> Cari petunjuk di web (Tavily) ${w.consents.includes('external_search') ? '' : '<span class="small muted">— aktifkan persetujuan di Pengaturan</span>'}</label>
-          <p class="small muted">Tanpa keduanya, SANDAR tetap menyusun rencana dasar dari logika deterministik dan katalog.</p>
+        <fieldset><legend>Persetujuan</legend>
+          ${toggle('workspace_storage', 'Simpan tugas dan rencana di Ruang Saya <span class="badge neutral">Diperlukan</span>', PURPOSES.workspace_storage[1])}
+          ${toggle('ai_processing', 'Gunakan bantuan AI (Groq) <span class="badge neutral">Opsional</span>', PURPOSES.ai_processing[1])}
+          ${toggle('external_search', 'Cari petunjuk di web (Tavily) <span class="badge neutral">Opsional</span>', PURPOSES.external_search[1])}
+          <p class="small muted" style="margin:.5rem 0 0">Tanpa AI dan pencarian, SANDAR tetap menyusun rencana dasar dari logika deterministik dan katalog. Persetujuan bisa dicabut di Privasi &amp; data.</p>
         </fieldset>
         <div id="task-err" role="alert"></div>
-        <button class="btn" type="submit" ${w.consents.includes('workspace_storage') ? '' : 'disabled'}>Lanjut</button>
+        <div class="row"><button class="btn" type="submit">Susun pilihan <span aria-hidden="true">→</span></button><a class="btn ghost" href="/ruang" data-link>Batal</a></div>
       </form>`)
     $('#task-form').addEventListener('submit', async (e) => {
       e.preventDefault()
       const objective = $('#objective').value.trim()
-      if (objective.length < 3) { $('#task-err').innerHTML = '<p class="err">Tuliskan tujuan minimal 3 karakter.</p>'; return $('#objective').focus() }
+      const err = $('#task-err')
+      if (objective.length < 3) { err.innerHTML = '<p class="err">Tuliskan tujuan minimal 3 karakter.</p>'; $('#objective').setAttribute('aria-invalid', 'true'); return $('#objective').focus() }
+      const want = Object.fromEntries($$('[data-optin]').map((c) => [c.dataset.optin, c.checked]))
+      if (!want.workspace_storage) { err.innerHTML = '<p class="err">Persetujuan penyimpanan diperlukan agar tugas dan rencana dapat disimpan. Anda tetap bisa memakai katalog dan kalkulator tamu tanpa menyimpan.</p>'; return }
       const btn = e.submitter || $('#task-form button[type=submit]')
-      btn.disabled = true; btn.textContent = 'Memproses…'
+      btn.disabled = true; btn.textContent = 'SANDAR sedang menyusun…'
       try {
-        const r = await S.api('/me/tasks', { method: 'POST', body: { objective, area: $('#area').value || undefined, use_ai: $('#use_ai').checked, use_search: $('#use_search').checked } })
-        S.state.workspace = null
+        for (const [p, on] of Object.entries(want)) {
+          if (on && !has(p)) await S.api('/me/consents', { method: 'POST', body: { purpose_code: p } })
+          if (!on && has(p)) await S.api(`/me/consents/${p}/revoke`, { method: 'POST' })
+        }
+        const r = await S.api('/me/tasks', { method: 'POST', body: { objective, area: $('#area').value || undefined, use_ai: !!want.ai_processing, use_search: !!want.external_search } })
+        S.intent.clear(); S.state.workspace = null
         S.go('/ruang/tugas/' + r.task.id)
-      } catch (err) { $('#task-err').innerHTML = S.errorBox(err); btn.disabled = false; btn.textContent = 'Lanjut' }
+      } catch (er) { err.innerHTML = S.errorBox(er); btn.disabled = false; btn.innerHTML = 'Susun pilihan <span aria-hidden="true">→</span>' }
     })
   }, { auth: true })
 
@@ -151,7 +168,7 @@
           announce('Rencana disimpan'); S.state.workspace = null; S.go('/ruang/rencana/' + p.plan.id)
         } catch (err) { $('#save-err').innerHTML = S.errorBox(err) }
       })
-      $('#btn-discard').onclick = async () => { if (!confirm('Buang hasil tugas ini? Tugas dan hasilnya akan dihapus.')) return; await S.api('/me/tasks/' + t.id, { method: 'DELETE' }); announce('Hasil dibuang'); S.go('/ruang') }
+      $('#btn-discard').onclick = async () => { if (!(await S.confirm({ title: 'Buang hasil ini?', body: 'Tugas dan hasilnya akan dihapus dari Ruang Saya.', confirmLabel: 'Buang hasil', danger: true }))) return; await S.api('/me/tasks/' + t.id, { method: 'DELETE' }); announce('Hasil dibuang'); S.go('/ruang') }
       return
     } else {
       inner += `<div class="notice ${t.status === 'failed' ? 'bad' : ''}">${t.status === 'failed' ? 'Tugas gagal diproses. Data Anda tidak berubah. Silakan coba lagi.' : 'Tugas ini ' + esc(STATUS[t.status]).toLowerCase() + '.'}</div><a class="btn" href="/ruang/tugas/baru" data-link>Tulis tujuan baru</a>`
@@ -210,11 +227,11 @@
             <div class="row"><button class="btn" type="submit">Simpan perubahan</button><button class="btn danger" type="button" id="btn-delplan">Hapus rencana</button></div>
           </form></section>`)
       $('#pe-status').value = p.status
-      $$('[data-step]').forEach((c) => (c.onchange = async () => { try { await S.api(`/me/plans/${p.id}/steps/${c.dataset.step}`, { method: 'PATCH', body: { done: c.checked } }); announce(c.checked ? 'Langkah ditandai selesai' : 'Langkah ditandai belum selesai'); load() } catch (e) { c.checked = !c.checked; alert(e.message) } }))
-      $$('[data-delstep]').forEach((b) => (b.onclick = async () => { if (!confirm('Hapus langkah ini?')) return; await S.api(`/me/plans/${p.id}/steps/${b.dataset.delstep}`, { method: 'DELETE' }); announce('Langkah dihapus'); load() }))
-      $('#add-step').onsubmit = async (e) => { e.preventDefault(); const tt = $('#new-step').value.trim(); if (!tt) return $('#new-step').focus(); try { await S.api(`/me/plans/${p.id}/steps`, { method: 'POST', body: { title: tt } }); announce('Langkah ditambahkan'); await load(); $('#new-step').focus() } catch (er) { alert(er.message) } }
+      $$('[data-step]').forEach((c) => (c.onchange = async () => { try { await S.api(`/me/plans/${p.id}/steps/${c.dataset.step}`, { method: 'PATCH', body: { done: c.checked } }); announce(c.checked ? 'Langkah ditandai selesai' : 'Langkah ditandai belum selesai'); load() } catch (e) { c.checked = !c.checked; S.toast(e.message, 'bad') } }))
+      $$('[data-delstep]').forEach((b) => (b.onclick = async () => { if (!(await S.confirm({ title: 'Hapus langkah ini?', body: 'Langkah akan dihapus dari rencana.', confirmLabel: 'Hapus', danger: true }))) return; await S.api(`/me/plans/${p.id}/steps/${b.dataset.delstep}`, { method: 'DELETE' }); announce('Langkah dihapus'); load() }))
+      $('#add-step').onsubmit = async (e) => { e.preventDefault(); const tt = $('#new-step').value.trim(); if (!tt) return $('#new-step').focus(); try { await S.api(`/me/plans/${p.id}/steps`, { method: 'POST', body: { title: tt } }); announce('Langkah ditambahkan'); await load(); $('#new-step').focus() } catch (er) { S.toast(er.message, 'bad') } }
       $('#plan-edit').onsubmit = async (e) => { e.preventDefault(); try { await S.api(`/me/plans/${p.id}`, { method: 'PATCH', body: { title: $('#pe-title').value, review_date: $('#pe-review').value || null, notes: $('#pe-notes').value, status: $('#pe-status').value } }); $('#pe-msg').innerHTML = '<div class="notice ok">Perubahan disimpan.</div>'; announce('Perubahan disimpan') } catch (er) { $('#pe-msg').innerHTML = S.errorBox(er) } }
-      $('#btn-delplan').onclick = async () => { if (!confirm(`Hapus rencana "${p.title}" beserta ${d.steps.length} langkahnya? Tindakan ini tidak dapat dibatalkan.`)) return; await S.api('/me/plans/' + p.id, { method: 'DELETE' }); S.state.workspace = null; announce('Rencana dihapus'); S.go('/ruang/rencana') }
+      $('#btn-delplan').onclick = async () => { if (!(await S.confirm({ title: 'Hapus rencana ini?', body: `"${p.title}" beserta ${d.steps.length} langkahnya akan dihapus. Tindakan ini tidak dapat dibatalkan.`, confirmLabel: 'Hapus rencana', danger: true }))) return; await S.api('/me/plans/' + p.id, { method: 'DELETE' }); S.state.workspace = null; announce('Rencana dihapus'); S.go('/ruang/rencana') }
     }
     v.innerHTML = '<p class="loading">Memuat rencana…</p>'
     await load()
@@ -258,7 +275,7 @@
     const opening = () => { const r = $('#p-open').value.trim().replace(/[.\s]/g, ''); if (!r) return null; if (!/^-?\d{1,13}$/.test(r)) throw new Error('Saldo awal harus bilangan bulat.'); return Number(r) }
     const renderList = () => {
       $('#cf-list').innerHTML = items.length ? `<div class="table-wrap"><table><thead><tr><th>Entri</th><th>Arah</th><th>Tanggal</th><th>Ulang</th><th>Kepastian</th><th class="num">Jumlah</th><th><span class="sr-only">Aksi</span></th></tr></thead><tbody>${items.map((i) => `<tr><td>${esc(i.label)}</td><td>${i.direction === 'inflow' ? 'Masuk' : 'Keluar'}</td><td>${i.expected_date ? fmtDate(i.expected_date) : '<span class="muted">Tanpa tanggal</span>'}</td><td>${recL[i.recurrence]}</td><td>${certL[i.certainty]}</td><td class="num">${idr(i.amount_minor)}</td><td><button class="btn link" data-delcf="${esc(i.id)}" aria-label="Hapus ${esc(i.label)}">Hapus</button></td></tr>`).join('')}</tbody></table></div>` : '<p class="muted">Belum ada entri.</p>'
-      $$('[data-delcf]').forEach((b) => (b.onclick = async () => { if (!confirm('Hapus entri ini?')) return; await S.api('/me/cash-flow-items/' + b.dataset.delcf, { method: 'DELETE' }); announce('Entri dihapus'); await loadItems() }))
+      $$('[data-delcf]').forEach((b) => (b.onclick = async () => { if (!(await S.confirm({ title: 'Hapus entri ini?', body: 'Entri arus uang akan dihapus permanen.', confirmLabel: 'Hapus', danger: true }))) return; await S.api('/me/cash-flow-items/' + b.dataset.delcf, { method: 'DELETE' }); announce('Entri dihapus'); await loadItems() }))
       $('#sc-box').innerHTML = items.length ? items.map((i) => `<div class="row small" style="margin:.3rem 0"><label for="sc-${esc(i.id)}" style="min-width:12rem">${esc(i.label)} (${i.direction === 'inflow' ? 'masuk' : 'keluar'})</label><input id="sc-${esc(i.id)}" data-sc="${esc(i.id)}" type="text" inputmode="numeric" value="${i.amount_minor}" style="max-width:12rem"><label class="choice"><input type="checkbox" data-scrm="${esc(i.id)}"> Keluarkan</label></div>`).join('') : '<p class="muted small">Tambahkan entri terlebih dahulu.</p>'
     }
     const loadItems = async () => { if (!w.consents.includes('workspace_storage')) { $('#cf-list').innerHTML = '<p class="muted">Setujui penyimpanan untuk menyimpan entri. Atau <a href="/coba/arus-uang" data-link>coba tanpa menyimpan</a>.</p>'; return } items = (await S.api('/me/cash-flow-items')).items; renderList() }
@@ -303,7 +320,7 @@
       const d = w.consents.includes('workspace_storage') ? await S.api('/me/goals') : { goals: [] }
       $('#g-list').innerHTML = d.goals.length ? `<ul>${d.goals.map((g) => `<li class="step-item ${g.status === 'done' ? 'done' : ''}"><input type="checkbox" id="g-${esc(g.id)}" data-goal="${esc(g.id)}" ${g.status === 'done' ? 'checked' : ''}><label class="t" for="g-${esc(g.id)}" style="flex:1;font-weight:400">${esc(g.title)} <span class="badge neutral">${esc(AREAS[g.area] || g.area)}</span>${g.target_date ? ` <span class="small muted">target ${fmtDate(g.target_date)}</span>` : ''}</label><button class="btn link" data-delgoal="${esc(g.id)}" aria-label="Hapus ${esc(g.title)}">Hapus</button></li>`).join('')}</ul>` : '<p class="muted">Belum ada tujuan.</p>'
       $$('[data-goal]').forEach((c) => (c.onchange = async () => { await S.api('/me/goals/' + c.dataset.goal, { method: 'PATCH', body: { status: c.checked ? 'done' : 'active' } }); announce('Tujuan diperbarui'); load() }))
-      $$('[data-delgoal]').forEach((b) => (b.onclick = async () => { if (!confirm('Hapus tujuan ini?')) return; await S.api('/me/goals/' + b.dataset.delgoal, { method: 'DELETE' }); announce('Tujuan dihapus'); load() }))
+      $$('[data-delgoal]').forEach((b) => (b.onclick = async () => { if (!(await S.confirm({ title: 'Hapus tujuan ini?', body: 'Tujuan akan dihapus permanen.', confirmLabel: 'Hapus', danger: true }))) return; await S.api('/me/goals/' + b.dataset.delgoal, { method: 'DELETE' }); announce('Tujuan dihapus'); load() }))
     }
     v.innerHTML = shell('/ruang/tujuan', `<h1>Tujuan</h1>${consentGate(w, 'workspace_storage')}
       <form id="goal-form" class="card" ${w.consents.includes('workspace_storage') ? '' : 'hidden'} novalidate>

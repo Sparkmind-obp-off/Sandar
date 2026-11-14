@@ -120,6 +120,10 @@
       })()
     })
   }
+  S.clerkAppearance = {
+    variables: { colorPrimary: '#0f5545', colorText: '#17201c', colorTextSecondary: '#56625c', colorBackground: '#ffffff', colorInputBackground: '#ffffff', borderRadius: '12px', fontFamily: 'Inter, system-ui, sans-serif', fontSize: '15px' },
+    elements: { card: { boxShadow: '0 2px 6px rgba(23,32,28,.06), 0 24px 48px rgba(23,32,28,.10)', border: '1px solid #e2ddd1' }, formButtonPrimary: { borderRadius: '999px', textTransform: 'none' }, socialButtonsBlockButton: { borderRadius: '999px' } },
+  }
   S.signedIn = () => !!(S.state.clerk && S.state.clerk.user)
   S.signOut = async () => { if (S.state.clerk) await S.state.clerk.signOut(); S.state.workspace = null; S.go('/') }
 
@@ -134,27 +138,34 @@
     document.getElementById('root').innerHTML = `
       <div id="offline-banner" hidden role="status">Anda sedang luring. Beberapa fitur mungkin tidak tersedia.</div>
       <header class="site"><div class="wrap">
-        <a class="brand" href="/" data-link aria-label="SANDAR, ke beranda"><img src="/static/favicon.svg" alt="" width="32" height="32"> SANDAR</a>
-        <nav class="main" aria-label="Navigasi utama"><ul id="nav-list"></ul></nav>
+        <a class="brand" href="/" data-link aria-label="SANDAR, ke beranda"><img src="/static/favicon.svg" alt="" width="34" height="34"> SANDAR</a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="main-nav"><span class="bars" aria-hidden="true"><span></span><span></span><span></span></span>Menu</button>
+        <nav class="main" id="main-nav" aria-label="Navigasi utama"><ul id="nav-list"></ul></nav>
       </div></header>
       <main id="main" tabindex="-1"><div class="wrap" id="view"></div></main>
       <footer class="site"><div class="wrap">
-        <strong>SANDAR — Agentic Life Navigation & Resilience OS</strong>
-        <p class="small muted">Membuat langkah berikutnya lebih jelas, tanpa mengambil kendali dari Anda. SANDAR bukan layanan darurat, bukan penasihat keuangan/hukum/medis, dan tidak menentukan kelayakan program.</p>
-        <ul>
-          <li><a href="/cara-kerja" data-link>Cara kerja</a></li>
-          <li><a href="/harga" data-link>Paket & harga</a></li>
-          <li><a href="/privasi" data-link>Privasi</a></li>
-          <li><a href="/ketentuan" data-link>Ketentuan (draf)</a></li>
-          <li><a href="/aksesibilitas" data-link>Aksesibilitas</a></li>
-          <li><a href="/bantuan" data-link>Bantuan & kontak</a></li>
-        </ul>
-        <p class="small muted">Dalam keadaan darurat, hubungi 112.</p>
-      </div></footer>`
+        <div class="footer-grid">
+          <div><strong>SANDAR</strong><p class="small" style="margin-top:.4rem;max-width:34rem">Agentic Life Navigation &amp; Resilience OS. Membantu langkah berikutnya lebih jelas, tanpa mengambil kendali dari Anda. SANDAR bukan layanan darurat, bukan penasihat keuangan/hukum/medis, dan tidak menentukan kelayakan program.</p></div>
+          <nav aria-label="Tautan kaki"><ul>
+            <li><a href="/cara-kerja" data-link>Cara kerja</a></li>
+            <li><a href="/harga" data-link>Paket &amp; harga</a></li>
+            <li><a href="/privasi" data-link>Privasi</a></li>
+            <li><a href="/ketentuan" data-link>Ketentuan (draf)</a></li>
+            <li><a href="/aksesibilitas" data-link>Aksesibilitas</a></li>
+            <li><a href="/bantuan" data-link>Bantuan &amp; kontak</a></li>
+          </ul></nav>
+        </div>
+        <div class="footer-meta"><span>Dalam keadaan darurat, hubungi <strong>112</strong>.</span><span>© ${new Date().getFullYear()} SANDAR</span></div>
+      </div></footer>
+      <div class="toast-region" id="toasts" role="status" aria-live="polite"></div>`
+    const tg = document.querySelector('.menu-toggle'), nav = document.getElementById('main-nav')
+    tg.onclick = () => { const open = tg.getAttribute('aria-expanded') !== 'true'; tg.setAttribute('aria-expanded', String(open)); nav.classList.toggle('open', open); if (open) { const a = nav.querySelector('a,button'); a && a.focus() } }
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && nav.classList.contains('open')) { S.closeMenu(); tg.focus() } })
     S.renderNav()
     const ob = () => { const b = document.getElementById('offline-banner'); if (b) b.hidden = navigator.onLine }
     addEventListener('online', ob); addEventListener('offline', ob); ob()
   }
+  S.closeMenu = () => { const tg = document.querySelector('.menu-toggle'), nav = document.getElementById('main-nav'); if (tg) tg.setAttribute('aria-expanded', 'false'); if (nav) nav.classList.remove('open') }
   S.renderNav = function () {
     const ul = document.getElementById('nav-list')
     if (!ul) return
@@ -162,15 +173,40 @@
     ul.innerHTML = NAV().map(([href, label]) => {
       const cur = href === '/' ? path === '/' : path === href || path.startsWith(href + '/')
       return `<li><a href="${href}" data-link ${cur ? 'aria-current="page"' : ''}>${esc(label)}</a></li>`
-    }).join('') + (S.signedIn() ? `<li><button type="button" id="btn-signout">Keluar</button></li>` : `<li><a href="/masuk" data-link ${path === '/masuk' ? 'aria-current="page"' : ''}>Masuk</a></li>`)
+    }).join('') + (S.signedIn() ? `<li><button type="button" id="btn-signout">Keluar</button></li>` : `<li class="nav-cta"><a href="/masuk" data-link ${path === '/masuk' ? 'aria-current="page"' : ''}>Masuk</a></li>`)
     const so = document.getElementById('btn-signout')
     if (so) so.onclick = S.signOut
+  }
+
+  // ---------- dialogs & toasts (replace native confirm/alert) ----------
+  S.toast = (msg, kind) => {
+    const r = document.getElementById('toasts'); if (!r) return
+    const t = document.createElement('div'); t.className = 'toast' + (kind === 'bad' ? ' bad' : ''); t.textContent = msg
+    r.appendChild(t); setTimeout(() => t.remove(), 4200)
+  }
+  S.confirm = ({ title, body, confirmLabel = 'Lanjutkan', danger = false }) => new Promise((resolve) => {
+    const d = document.createElement('dialog'); d.className = 'sd-dialog'; d.setAttribute('aria-labelledby', 'dlg-t')
+    d.innerHTML = `<div class="dlg-body"><h2 id="dlg-t">${esc(title)}</h2><p class="muted" style="margin:0">${esc(body || '')}</p></div>
+      <div class="dlg-actions"><button class="btn secondary" value="cancel" type="button" data-x="0">Batal</button><button class="btn ${danger ? 'danger' : ''}" type="button" data-x="1">${esc(confirmLabel)}</button></div>`
+    document.body.appendChild(d)
+    const prev = document.activeElement
+    const close = (v) => { d.close(); d.remove(); if (prev && prev.focus) prev.focus(); resolve(v) }
+    d.addEventListener('click', (e) => { const b = e.target.closest('[data-x]'); if (b) close(b.dataset.x === '1'); else if (e.target === d) close(false) })
+    d.addEventListener('cancel', (e) => { e.preventDefault(); close(false) })
+    d.showModal(); d.querySelector('[data-x="0"]').focus()
+  })
+
+  // Intent preserved across sign-in (local only; never sent to the server until the user submits).
+  S.intent = {
+    set: (o) => { try { sessionStorage.setItem('sandar.intent', JSON.stringify({ ...o, at: Date.now() })) } catch (_) {} },
+    get: () => { try { const o = JSON.parse(sessionStorage.getItem('sandar.intent') || 'null'); return o && Date.now() - o.at < 3600e3 ? o : null } catch (_) { return null } },
+    clear: () => { try { sessionStorage.removeItem('sandar.intent') } catch (_) {} },
   }
 
   // ---------- router ----------
   S.routes = []
   S.route = (pattern, handler, opts = {}) => S.routes.push({ re: new RegExp('^' + pattern.replace(/:(\w+)/g, '(?<$1>[^/]+)') + '/?$'), handler, opts })
-  S.go = (path) => { history.pushState({}, '', path); S.router() }
+  S.go = (path) => { S.closeMenu && S.closeMenu(); history.pushState({}, '', path); S.router() }
   S.view = () => document.getElementById('view')
   S.setTitle = (t) => (document.title = t ? `${t} — SANDAR` : 'SANDAR — Navigasi Hidup & Ketahanan')
   S.router = async function () {
@@ -210,11 +246,11 @@
     return `<span class="badge ${cls}">${esc(v.label)}</span>`
   }
   S.listingCard = (it) => `
-    <article class="card" aria-labelledby="l-${esc(it.id)}">
+    <article class="card listing-card" aria-labelledby="l-${esc(it.id)}">
       <div class="row">${S.statusBadge(it.verification)} ${it.is_sample ? '<span class="badge info">Data contoh</span>' : ''} <span class="badge neutral">${it.kind === 'opportunity' ? 'Peluang' : 'Sumber/layanan'}</span></div>
       <h3 id="l-${esc(it.id)}" style="margin-top:.5rem"><a href="/jelajahi/${esc(it.id)}" data-link>${esc(it.title)}</a></h3>
       <p class="small">${esc(it.summary)}</p>
-      <p class="small muted">Penerbit: ${esc(it.publisher.name)} · Cakupan: ${esc(it.coverage || it.jurisdiction)} · Diperiksa: ${it.last_verified_at ? fmtDate(it.last_verified_at) : 'belum'}</p>
+      <p class="small muted meta">Penerbit: ${esc(it.publisher.name)} · Cakupan: ${esc(it.coverage || it.jurisdiction)} · Diperiksa: ${it.last_verified_at ? fmtDate(it.last_verified_at) : 'belum'}</p>
     </article>`
 
   // ---------- public pages ----------
@@ -287,21 +323,31 @@
     ]
     const chosen = labels[area] ? area : 'life'
     const next = '/ruang/tugas/baru?area=' + encodeURIComponent(chosen)
+    const examples = { life: 'Contoh: Saya ingin menata prioritas beberapa bulan ke depan.', finance: 'Contoh: Saya ingin merapikan pengeluaran bulanan.', resources: 'Contoh: Saya ingin tahu layanan resmi terkait jaminan sosial.', opportunity: 'Contoh: Saya ingin belajar keterampilan digital dasar.', resilience: 'Contoh: Saya ingin punya rencana cadangan bila pemasukan berubah.' }
     v.innerHTML = `
       <div class="onboarding-wrap">
         <a class="back-link" href="/" data-link>← Kembali ke beranda</a>
         <div class="onboarding-heading"><span class="eyebrow">MULAI DENGAN RINGAN</span><h1>Hal apa yang ingin Anda buat lebih jelas?</h1><p class="lead">Pilih titik awal. Tidak ada jawaban yang salah dan Anda tidak perlu menceritakan semuanya sekaligus.</p></div>
-        <div class="onboarding-progress" aria-label="Langkah 1 dari 3"><span class="active"></span><span></span><span></span></div>
+        <div class="onboarding-progress" role="img" aria-label="Langkah 1 dan 2 dari 3"><span class="active"></span><span class="active"></span><span></span></div>
         <p class="small muted">LANGKAH 1 DARI 3 · PILIH AREA</p>
         <div class="grid onboarding-grid">
           ${cards.map(([key,title,desc,icon]) => `<a class="card task onboarding-choice ${chosen===key?'selected':''}" href="/mulai?area=${key}" data-link ${chosen===key?'aria-current="true"':''}><span class="icon" aria-hidden="true">${icon}</span><h3>${title}</h3><span class="small muted">${desc}</span><span class="choice-indicator" aria-hidden="true">${chosen===key?'✓':'+'}</span></a>`).join('')}
         </div>
-        <div class="onboarding-next card">
-          <div><span class="eyebrow">AREA TERPILIH</span><h2>${labels[chosen]}</h2><p class="small muted">Berikutnya Anda dapat menuliskan tujuan dengan kata-kata sendiri. Akun diperlukan saat menggunakan Ruang Saya untuk menyimpan dan melanjutkan rencana.</p></div>
-          <div class="row"><a class="btn" href="/masuk?next=${encodeURIComponent(next)}" data-link>Lanjutkan <span aria-hidden="true">→</span></a><a class="btn secondary" href="/jelajahi" data-link>Jelajahi tanpa akun</a></div>
-        </div>
-        <p class="small muted onboarding-privacy">Privasi: jangan masukkan NIK, kata sandi, nomor rekening, atau data sensitif. Persetujuan penyimpanan dan pemrosesan AI akan dijelaskan terpisah.</p>
+        <form class="onboarding-next card" id="intent-form" novalidate style="display:block">
+          <span class="eyebrow">LANGKAH 2 DARI 3 · AREA TERPILIH</span><h2>${labels[chosen]}</h2>
+          <div class="field" style="max-width:none;margin-top:.8rem"><label for="intent-objective">Ceritakan singkat apa yang ingin Anda urus <span class="hint">(opsional)</span></label>
+            <textarea id="intent-objective" maxlength="500" aria-describedby="intent-h" placeholder="${esc(examples[chosen])}">${esc((S.intent.get() || {}).area === chosen ? (S.intent.get().objective || '') : '')}</textarea>
+            <span class="hint" id="intent-h">Teks ini hanya disimpan di peramban Anda sampai Anda masuk dan mengirimnya. Jangan tulis NIK, nomor rekening, alamat, atau data kesehatan.</span></div>
+          <p class="small muted">Langkah 3: masuk agar rencana bisa disimpan dan dilanjutkan. Persetujuan penyimpanan dan AI dijelaskan terpisah sesudahnya.</p>
+          <div class="row"><button class="btn" type="submit">${S.signedIn() ? 'Lanjutkan ke Ruang Saya' : 'Lanjutkan & masuk'} <span aria-hidden="true">→</span></button>${area === 'finance' ? '<a class="btn secondary" href="/coba/arus-uang" data-link>Coba hitung tanpa akun</a>' : '<a class="btn secondary" href="/jelajahi" data-link>Jelajahi tanpa akun</a>'}</div>
+        </form>
+        <p class="small muted onboarding-privacy">SANDAR tidak menebak keadaan Anda dan tidak mengirim apa pun atas nama Anda.</p>
       </div>`
+    $('#intent-form').addEventListener('submit', (e) => {
+      e.preventDefault()
+      S.intent.set({ area: chosen, objective: $('#intent-objective').value.trim().slice(0, 500) })
+      S.go(S.signedIn() ? next : '/masuk?next=' + encodeURIComponent(next))
+    })
   })
 
   S.route('/jelajahi', async (v) => {
@@ -438,13 +484,25 @@
     if (/\.pages\.dev$/.test(location.hostname)) { v.innerHTML = `<h1>Masuk</h1><div class="notice">Masuk tersedia di domain utama SANDAR. <a class="btn" href="https://www.sandar.biz.id/masuk?next=${encodeURIComponent(safeNext)}">Lanjut ke www.sandar.biz.id</a></div>`; return }
     if (!cfg.clerkPk) { v.innerHTML = '<h1>Masuk</h1><div class="notice warn">Layanan masuk belum dikonfigurasi. Katalog publik tetap tersedia.</div>'; return }
     if (S.signedIn()) return S.go(safeNext)
+    const it = S.intent.get()
     v.innerHTML = `
-      <h1>Masuk atau daftar</h1>
-      <div class="trust small">Akun diperlukan hanya untuk menyimpan data pribadi di Ruang Saya. Masuk diproses oleh Clerk (penyedia autentikasi). SANDAR tidak menyimpan kata sandi Anda. Setelah masuk, Anda tetap memilih apakah data disimpan.</div>
-      <div id="clerk-mount"><p class="loading">Memuat formulir masuk…</p></div>`
+      <div class="auth-layout">
+        <div class="auth-aside">
+          <span class="eyebrow">${it ? 'LANGKAH 3 DARI 3' : 'AKUN SANDAR'}</span>
+          <h1>Masuk untuk menyimpan dan melanjutkan.</h1>
+          <p class="lead">Akun hanya diperlukan untuk Ruang Saya. Katalog publik dan kalkulator tamu tetap bisa dipakai tanpa akun.</p>
+          ${it ? `<div class="trust small"><strong>Pilihan Anda tersimpan.</strong> Setelah masuk, Anda langsung kembali ke ${esc({ life: 'Navigasi Hidup', finance: 'Arus Uang', resources: 'Sumber Publik', opportunity: 'Peluang & Keterampilan', resilience: 'Rencana ke Depan' }[it.area] || 'Ruang Saya')}${it.objective ? ' dengan tujuan yang sudah Anda tulis' : ''}.</div>` : ''}
+          <ul class="small muted">
+            <li>Masuk diproses oleh Clerk; SANDAR tidak menyimpan kata sandi.</li>
+            <li>Setelah masuk, Anda tetap memilih apakah data disimpan.</li>
+            <li>Anda bisa mengekspor atau menghapus data kapan saja.</li>
+          </ul>
+        </div>
+        <div id="clerk-mount"><p class="loading">Memuat formulir masuk…</p></div>
+      </div>`
     if (!S.state.clerk) { $('#clerk-mount').innerHTML = '<div class="notice bad" role="alert">Layanan masuk sedang tidak dapat dimuat. Coba muat ulang halaman.</div>'; return }
     $('#clerk-mount').innerHTML = ''
-    S.state.clerk.mountSignIn($('#clerk-mount'), { forceRedirectUrl: safeNext, signUpForceRedirectUrl: safeNext, routing: 'hash' })
+    S.state.clerk.mountSignIn($('#clerk-mount'), { forceRedirectUrl: location.origin + safeNext, signUpForceRedirectUrl: location.origin + safeNext, routing: 'hash', appearance: S.clerkAppearance })
   })
 
   const staticPage = (title, html) => async (v) => { S.setTitle(title); v.innerHTML = `<h1>${esc(title)}</h1>${html}` }
@@ -475,7 +533,7 @@
       <h1>Paket & harga</h1>
       <div class="notice warn" role="note"><strong>Hipotesis harga.</strong> ${esc(d.note)}</div>
       <div class="grid">${d.plans.map((p) => `
-        <article class="card"><h2 style="margin-top:0">${esc(p.name)}</h2>
+        <article class="card plan-card ${p.id === 'plus_annual' ? 'featured' : ''}"><span class="eyebrow">${p.id === 'free' ? 'Untuk semua' : p.id === 'organization' ? 'Tim & lembaga' : p.id === 'plus_annual' ? 'Paling hemat' : 'Fleksibel'}</span><h2 style="margin:.2rem 0 0;font-size:1.3rem">${esc(p.name)}</h2>
           <p class="price">${p.price_minor === null ? 'Hubungi kami' : p.price_minor === 0 ? 'Rp0' : idr(p.price_minor)}<span class="small muted">${p.billing_period === 'month' ? ' / bulan' : p.billing_period === 'year' ? ' / tahun' : ''}</span></p>
           <p class="small">${esc(p.description)}</p>
           ${p.quotas.agent_runs_per_month ? `<ul class="small"><li>${p.quotas.agent_runs_per_month} tugas agen / bulan</li><li>${p.quotas.ai_assist_per_month} bantuan AI / bulan (fair-use)</li><li>${p.quotas.external_search_per_month} pencarian web / bulan</li><li>${p.quotas.active_plans} rencana aktif</li></ul>` : ''}
