@@ -88,6 +88,19 @@ npm run typecheck
 Vars (wrangler.jsonc): `ENVIRONMENT`, `APP_ORIGIN`, `AUTHORIZED_PARTIES`, `CLERK_PUBLISHABLE_KEY`, `CLERK_ISSUER`, `GROQ_MODEL`, `PROVIDER_DAILY_CAPS`, `BILLING_ENABLED`, `PAYMENT_PROVIDER`.
 Secrets (`wrangler pages secret put … --project-name sandar`): `CLERK_SECRET_KEY`, `ADMIN_SUBJECTS`, `GROQ_API_KEY`, `TAVILY_API_KEY`, `FIRECRAWL_API_KEY`, optional `CLERK_JWT_KEY`, `MIDTRANS_SERVER_KEY`.
 
+### Deployment status (verified 2026-11-14)
+| Item | State | Evidence |
+|---|---|---|
+| Cloudflare Pages project | `sandar`, production branch `main` | `wrangler pages deployment list` |
+| https://sandar.pages.dev | ✅ live (HTTP 200, `/api/v1/health` → `database: ok`, `environment: production`) | curl smoke tests |
+| https://www.sandar.biz.id | ✅ active custom domain, TLS OK | Pages domain status `active` |
+| https://sandar.biz.id (apex) | ⏳ pending — Cloudflare reports "CNAME record not set" (currently error 1014) | owner must set DNS (token has no DNS edit permission) |
+| D1 `sandar-production` | ✅ migration 0001 applied, 8 catalogue rows (3 samples) | `wrangler d1 migrations apply --remote` |
+| Clerk Production | ✅ instance `production`, allowed origins set, FAPI/JWKS live, sign-in page loads without CSP errors; API rejects anonymous / garbage / forged-signature tokens | ⏳ a real human sign-in has not yet been performed |
+| Secrets | `CLERK_SECRET_KEY`, `TAVILY_API_KEY`, `FIRECRAWL_API_KEY` set; `GROQ_API_KEY`, `ADMIN_SUBJECTS` not set | `wrangler pages secret list` (values never printed) |
+| Billing | OFF (`BILLING_ENABLED=false`, `PAYMENT_PROVIDER=none`); checkout returns `BILLING_DISABLED` | |
+| Sign-in on `*.pages.dev` | Redirects users to `www.sandar.biz.id` (Clerk Production cookies only work on the owner's domain) | |
+
 ### Deployment (Cloudflare Pages, owner's account via BYOK token)
 ```bash
 npm run db:migrate:prod                  # applies migrations to remote D1
