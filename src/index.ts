@@ -22,8 +22,8 @@ app.use('*', async (c, next) => {
       'content-security-policy',
       [
         "default-src 'self'",
-        `script-src 'self' ${clerk} https://challenges.cloudflare.com`,
-        `connect-src 'self' ${clerk} https://api.clerk.com https://clerk-telemetry.com`,
+        `script-src 'self' ${clerk} https://cdn.protect.clerk.com https://challenges.cloudflare.com`,
+        `connect-src 'self' ${clerk} https://cdn.protect.clerk.com https://api.clerk.com https://clerk-telemetry.com`,
         "img-src 'self' data: https://img.clerk.com",
         "style-src 'self' 'unsafe-inline'",
         "font-src 'self' data:",
