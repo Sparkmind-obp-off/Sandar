@@ -47,7 +47,7 @@ Help people navigate changing real-life circumstances with more clarity, agency,
 - GitHub: https://github.com/Sparkmind-obp-off/Sandar
 
 ### Tech stack
-Hono (TypeScript) on Cloudflare Pages Functions · Cloudflare D1 (`sandar-production`) · Clerk Production auth (server-side RS256 JWT verification) · vanilla-JS accessible SPA (Bahasa Indonesia) · Vitest.
+Hono (TypeScript) on Cloudflare Pages Functions · Cloudflare D1 (`sandar-production`) · Clerk Production auth (ClerkJS 6.43.1 + Clerk UI 1.42.4; server-side RS256 JWT verification) · vanilla-JS accessible SPA (Bahasa Indonesia) · Vitest.
 
 ### Features implemented
 | Area | What works | Key paths |
@@ -96,7 +96,7 @@ Secrets (`wrangler pages secret put … --project-name sandar`): `CLERK_SECRET_K
 | https://www.sandar.biz.id | ✅ active custom domain, TLS OK | Pages domain status `active` |
 | https://sandar.biz.id (apex) | ⏳ pending — Cloudflare reports "CNAME record not set" (currently error 1014) | owner must set DNS (token has no DNS edit permission) |
 | D1 `sandar-production` | ✅ migration 0001 applied, 8 catalogue rows (3 samples) | `wrangler d1 migrations apply --remote` |
-| Clerk Production | ✅ instance `production`, allowed origins set, FAPI/JWKS live, sign-in page loads without CSP errors; API rejects anonymous / garbage / forged-signature tokens | ⏳ a real human sign-in has not yet been performed |
+| Clerk Production | Instance `production`, allowed origins set, FAPI/JWKS live; API rejects anonymous / garbage / forged-signature tokens. Client SDK upgrade committed: ClerkJS 6.43.1 + Clerk UI 1.42.4 (Core 3). | ⏳ production deployment and real human sign-in must be re-verified after the upgrade |
 | Secrets | `CLERK_SECRET_KEY`, `TAVILY_API_KEY`, `FIRECRAWL_API_KEY` set; `GROQ_API_KEY`, `ADMIN_SUBJECTS` not set | `wrangler pages secret list` (values never printed) |
 | Billing | OFF (`BILLING_ENABLED=false`, `PAYMENT_PROVIDER=none`); checkout returns `BILLING_DISABLED` | |
 | Sign-in on `*.pages.dev` | Redirects users to `www.sandar.biz.id` (Clerk Production cookies only work on the owner's domain) | |
