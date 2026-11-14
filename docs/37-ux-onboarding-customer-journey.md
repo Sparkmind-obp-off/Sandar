@@ -1,7 +1,7 @@
 # SANDAR — UX Refresh & Customer Journey
 
 **Date:** 2026-11-15  
-**Status:** Implemented in frontend source; production deployment and device QA pending.
+**Status:** Deployed to production 2026-11-15. Automated responsive QA (360–1440 px) and authenticated journey QA passed; manual screen-reader QA not yet performed.
 
 ## 1. Source review
 

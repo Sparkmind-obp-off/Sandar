@@ -88,18 +88,20 @@ npm run typecheck
 Vars (wrangler.jsonc): `ENVIRONMENT`, `APP_ORIGIN`, `AUTHORIZED_PARTIES`, `CLERK_PUBLISHABLE_KEY`, `CLERK_ISSUER`, `GROQ_MODEL`, `PROVIDER_DAILY_CAPS`, `BILLING_ENABLED`, `PAYMENT_PROVIDER`.
 Secrets (`wrangler pages secret put … --project-name sandar`): `CLERK_SECRET_KEY`, `ADMIN_SUBJECTS`, `GROQ_API_KEY`, `TAVILY_API_KEY`, `FIRECRAWL_API_KEY`, optional `CLERK_JWT_KEY`, `MIDTRANS_SERVER_KEY`.
 
-### Deployment status (verified 2026-11-14)
+### Deployment status (verified 2026-11-15)
 | Item | State | Evidence |
 |---|---|---|
 | Cloudflare Pages project | `sandar`, production branch `main` | `wrangler pages deployment list` |
-| https://sandar.pages.dev | ✅ live (HTTP 200, `/api/v1/health` → `database: ok`, `environment: production`) | curl smoke tests |
-| https://www.sandar.biz.id | ✅ active custom domain, TLS OK | Pages domain status `active` |
-| https://sandar.biz.id (apex) | ⏳ pending — Cloudflare reports "CNAME record not set" (currently error 1014) | owner must set DNS (token has no DNS edit permission) |
-| D1 `sandar-production` | ✅ migration 0001 applied, 8 catalogue rows (3 samples) | `wrangler d1 migrations apply --remote` |
-| Clerk Production | Instance `production`, allowed origins set, FAPI/JWKS live; API rejects anonymous / garbage / forged-signature tokens. Client SDK upgrade committed: ClerkJS 6.43.1 + Clerk UI 1.42.4 (Core 3). | ⏳ production deployment and real human sign-in must be re-verified after the upgrade |
-| Secrets | `CLERK_SECRET_KEY`, `TAVILY_API_KEY`, `FIRECRAWL_API_KEY` set; `GROQ_API_KEY`, `ADMIN_SUBJECTS` not set | `wrangler pages secret list` (values never printed) |
-| Billing | OFF (`BILLING_ENABLED=false`, `PAYMENT_PROVIDER=none`); checkout returns `BILLING_DISABLED` | |
-| Sign-in on `*.pages.dev` | Redirects users to `www.sandar.biz.id` (Clerk Production cookies only work on the owner's domain) | |
+| https://sandar.pages.dev | ✅ live, `/api/v1/health` → `database: ok`, `environment: production` | curl + Playwright |
+| https://sandar.biz.id, https://www.sandar.biz.id | ✅ both custom domains `active`, TLS OK | Pages domain API |
+| D1 `sandar-production` | ✅ migration 0001 applied | `wrangler d1 migrations apply --remote` |
+| Clerk Production | ✅ Core 3 SDK (`@clerk/clerk-js@6` + `@clerk/ui@1`) loads from FAPI; "outdated version" error gone; real browser session on sandar.biz.id verified by backend; logout, expiry, tamper, cross-user tests pass (19/19, automated sign-in-token flow) | `e2e/auth_e2e.mjs` run against production |
+| Google OAuth | ✅ button redirects to accounts.google.com with `redirect_uri=https://clerk.sandar.biz.id/v1/oauth_callback`; ⏳ completion with the owner's real Google account not yet performed | Playwright |
+| Groq | ✅ `GROQ_API_KEY` set; model `openai/gpt-oss-20b`; live call in production task succeeded | task_events `groq_rewrite:ok` |
+| Tavily / Firecrawl | ✅ secrets set; Tavily live in production task; Firecrawl curator-only | task_events `tavily_search:hits:5` |
+| Apify / Scrape.ly | Not integrated (no requirement) | |
+| Billing | OFF (`BILLING_ENABLED=false`) | checkout returns `BILLING_DISABLED` |
+| Responsive | No horizontal overflow at 360/390/430/768/1024/1440 px on public pages; mobile menu + Esc verified | `e2e/resp.mjs` |
 
 ### Deployment (Cloudflare Pages, owner's account via BYOK token)
 ```bash

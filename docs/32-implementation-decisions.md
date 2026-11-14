@@ -53,3 +53,15 @@ Family Balance, wellbeing storage, reminders/notifications, bank connections, ex
 - Updated the client loader to load `@clerk/ui@1.42.4` first, then `@clerk/clerk-js@6.43.1`, then initialize with `ui: { ClerkUI: window.__internal_ClerkUICtor }`, matching Clerk's current JavaScript Quickstart/Core 3 flow.
 - Code committed to `main`; this record does not claim a production deployment or successful human sign-in. Rebuild/deploy, clear browser cache, and verify a real Google sign-in before marking authentication production-verified.
 - Official references: https://clerk.com/docs/js-frontend/getting-started/quickstart and https://clerk.com/docs/guides/protect/protections/require-minimum-clerkjs-version
+
+## D-10 Clerk Core 3 (2026-11-15)
+Root cause of "This app uses an outdated version of Clerk": the frontend loaded `@clerk/clerk-js@5`, which the production instance no longer accepts (`/v1/environment` reports `clerk_js_version: 6`). Fix: load `@clerk/ui@1/dist/ui.browser.js` then `@clerk/clerk-js@6/dist/clerk.browser.js` from the Clerk Frontend API (`clerk.sandar.biz.id`) and call `Clerk.load({ ui: { ClerkUI: window.__internal_ClerkUICtor } })`, per the official JS quickstart. Major-version pins (`@6`, `@1`) receive patch updates from Clerk's CDN; asset URLs carry a cache-busting `?v=` query. Backend JWT verification was unchanged and verified against real production sessions.
+
+## D-11 Design system v2 (2026-11-15)
+Self-hosted Inter + Fraunces variable fonts (SIL OFL, `public/static/fonts/LICENSE-OFL.txt`) — no third-party font CDN, CSP unchanged. Tokenized colors/spacing/radii, collapsible mobile navigation, accessible `<dialog>` confirmations and toasts replacing native `confirm()/alert()`, redesigned Command Center, auth page with intent summary.
+
+## D-12 Intent preserved through sign-in
+`/mulai` stores `{area, objective}` in `sessionStorage` only (1 h TTL), never sent to the server until the user submits the task form; `/ruang/tugas/baru` pre-fills it and shows per-purpose consent toggles inline (storage required, AI and web search optional).
+
+## D-13 Groq model
+`llama-3.1-8b-instant` is not available on the owner's Groq account; default is now `openai/gpt-oss-20b` (configurable via `GROQ_MODEL`) with `reasoning_effort: low`, `reasoning_format: hidden`.
