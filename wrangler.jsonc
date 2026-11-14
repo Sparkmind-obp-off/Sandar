@@ -1,0 +1,28 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "sandar",
+  "compatibility_date": "2024-09-23",
+  "compatibility_flags": ["nodejs_compat"],
+  "pages_build_output_dir": "./dist",
+  // Public, non-secret configuration only. Secrets (CLERK_SECRET_KEY, TAVILY_API_KEY,
+  // FIRECRAWL_API_KEY, GROQ_API_KEY, ...) are set with `wrangler pages secret put`.
+  "vars": {
+    "ENVIRONMENT": "production",
+    "APP_ORIGIN": "https://sandar.biz.id",
+    "AUTHORIZED_PARTIES": "https://sandar.biz.id,https://www.sandar.biz.id,https://sandar.pages.dev",
+    "CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsuc2FuZGFyLmJpei5pZCQ",
+    "CLERK_ISSUER": "https://clerk.sandar.biz.id",
+    "GROQ_MODEL": "llama-3.1-8b-instant",
+    "PROVIDER_DAILY_CAPS": "groq=200,tavily=30,firecrawl=10",
+    "BILLING_ENABLED": "false",
+    "PAYMENT_PROVIDER": "none"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "sandar-production",
+      "database_id": "e02e6e5e-de0b-49b6-9270-10d60ef28a8a",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

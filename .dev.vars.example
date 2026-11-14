@@ -1,0 +1,15 @@
+# Copy to .dev.vars for LOCAL development only (never commit .dev.vars).
+# Names only — never put real production values in examples.
+ENVIRONMENT=development
+# CLERK_PUBLISHABLE_KEY=pk_test_xxx        # use a Clerk DEVELOPMENT instance locally
+# CLERK_SECRET_KEY=sk_test_xxx
+# AUTHORIZED_PARTIES=http://localhost:3000
+# ADMIN_SUBJECTS=user_xxx                  # Clerk user IDs allowed to curate catalogue
+# GROQ_API_KEY=
+# GROQ_MODEL=llama-3.1-8b-instant
+# TAVILY_API_KEY=
+# FIRECRAWL_API_KEY=
+# PROVIDER_DAILY_CAPS=groq=200,tavily=30,firecrawl=10
+# BILLING_ENABLED=false
+# PAYMENT_PROVIDER=mock
+# MOCK_PAYMENT_SECRET=local-only-test-secret

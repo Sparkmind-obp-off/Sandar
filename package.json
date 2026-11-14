@@ -1,0 +1,29 @@
+{
+  "name": "sandar",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "dev:sandbox": "wrangler pages dev dist --local --ip 0.0.0.0 --port 3000",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "db:migrate:local": "wrangler d1 migrations apply sandar-production --local",
+    "db:migrate:prod": "wrangler d1 migrations apply sandar-production --remote",
+    "db:seed:local": "wrangler d1 execute sandar-production --local --file=./seed/catalogue.sql",
+    "db:seed:prod": "wrangler d1 execute sandar-production --remote --file=./seed/catalogue.sql",
+    "deploy:prod": "npm run build && wrangler pages deploy dist --project-name sandar --branch main"
+  },
+  "dependencies": {
+    "hono": "^4.13.18"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20260702.1",
+    "@hono/vite-cloudflare-pages": "^0.4.3",
+    "typescript": "^5.9.3",
+    "vite": "^5.4.21",
+    "vitest": "^2.1.9",
+    "wrangler": "^3.114.17"
+  }
+}
