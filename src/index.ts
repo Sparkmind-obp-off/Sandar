@@ -57,7 +57,7 @@ const shell = (clerkPk: string | undefined) => `<!doctype html>
 <a class="skip-link" href="#main">Lewati ke konten utama</a>
 <div id="root"><noscript><p style="padding:1rem">SANDAR memerlukan JavaScript. Katalog sumber publik juga tersedia melalui <a href="/api/v1/catalogue/resources">API publik</a>.</p></noscript></div>
 <div id="live" class="sr-only" aria-live="polite" aria-atomic="true"></div>
-<script src="/static/core.js" defer></script>
+<script src="/static/core.js?v=clerk-core3-20261115" defer></script>
 <script src="/static/ruang.js" defer></script>
 <script src="/static/app.js" defer></script>
 </body>
