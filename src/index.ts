@@ -63,6 +63,11 @@ const shell = (clerkPk: string | undefined) => `<!doctype html>
 </body>
 </html>`
 
+// Unknown API paths must return a JSON 404, never the SPA shell.
+app.all('/api/*', (c) =>
+  c.json({ error: { code: 'NOT_FOUND', message: 'Rute API tidak ditemukan.' } }, 404, { 'cache-control': 'no-store' }),
+)
+
 app.get('*', (c) => {
   return c.html(shell(c.env.CLERK_PUBLISHABLE_KEY), 200, { 'cache-control': 'no-cache' })
 })

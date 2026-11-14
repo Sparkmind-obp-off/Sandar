@@ -367,3 +367,16 @@ describe('catalogue freshness', () => {
     expect(listingFreshness({ verification_status: 'unverified', last_verified_at: null, review_interval_days: 30 }, now).is_current).toBe(false)
   })
 })
+
+describe('routing', () => {
+  it('unknown API routes return JSON 404, not the SPA shell', async () => {
+    const r = await call(makeEnv(), 'GET', '/api/v1/does-not-exist')
+    expect(r.status).toBe(404)
+    expect(r.json.error.code).toBe('NOT_FOUND')
+  })
+  it('SPA routes return the HTML shell', async () => {
+    const r = await call(makeEnv(), 'GET', '/ruang/rencana')
+    expect(r.status).toBe(200)
+    expect(String(r.json)).toContain('<div id="root">')
+  })
+})
