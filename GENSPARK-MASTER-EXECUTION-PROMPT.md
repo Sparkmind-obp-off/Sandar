@@ -279,6 +279,16 @@ Do not stop at a preview deployment if production access and required credential
 
 ## B. Cloudflare is the required production target
 
+**Mandatory Cloudflare Pages project identity**
+- The Cloudflare Pages project must be named exactly `sandar` (lowercase).
+- The required production Pages URL is exactly `https://sandar.pages.dev`.
+- Inspect the Cloudflare account first. If the `sandar` Pages project already exists and is the intended SANDAR project, reuse it; do not create a duplicate.
+- If it does not exist, create a Cloudflare Pages project with the exact project name `sandar` and configure its production deployment so the canonical Pages hostname is `https://sandar.pages.dev`.
+- Treat this project name and Pages URL as required acceptance criteria, not optional naming suggestions. Do not silently substitute another project slug or `*.pages.dev` hostname.
+- If Cloudflare reports that the project name or hostname is unavailable, or account permissions prevent creating/configuring it, stop that specific step, continue independent work, and report the exact blocker. Do not rename the project or choose an alternative URL without the owner's explicit approval.
+- Verify the actual project name in Cloudflare and open `https://sandar.pages.dev` after the production deployment. Report the real deployment/health evidence; never claim the URL is live merely because it is specified here.
+
+
 - Inspect the live Cloudflare account, existing Pages/Workers projects, domains, bindings, deployments, and current plan before making changes.
 - Use the existing SANDAR Cloudflare project if one exists and is verified as the intended project. Do not create duplicate projects without checking.
 - Configure the production build, server-side API, environment bindings, database migrations, routing, and custom domain only where account access and domain ownership are verified.
