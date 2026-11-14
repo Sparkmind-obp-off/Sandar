@@ -23,7 +23,7 @@ app.use('*', async (c, next) => {
       [
         "default-src 'self'",
         `script-src 'self' ${clerk} https://cdn.protect.clerk.com https://challenges.cloudflare.com`,
-        `connect-src 'self' ${clerk} https://cdn.protect.clerk.com https://api.clerk.com https://clerk-telemetry.com`,
+        `connect-src 'self' ${clerk} https://cdn.protect.clerk.com https://*.client.protect.clerk.com https://*.client.protect.clerk.com:* https://api.clerk.com https://clerk-telemetry.com`,
         "img-src 'self' data: https://img.clerk.com",
         "style-src 'self' 'unsafe-inline'",
         "font-src 'self' data:",

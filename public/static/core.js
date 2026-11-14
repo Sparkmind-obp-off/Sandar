@@ -69,7 +69,7 @@
   // ---------- auth (Clerk Production) ----------
   S.initAuth = function () {
     return new Promise((resolve) => {
-      if (!cfg.clerkPk) { S.state.authReady = true; return resolve() }
+      if (!cfg.clerkPk || /\.pages\.dev$/.test(location.hostname)) { S.state.authReady = true; return resolve() }
       let host
       try { host = atob(cfg.clerkPk.replace(/^pk_(live|test)_/, '')).replace(/\$$/, '') } catch (_) { S.state.authReady = true; return resolve() }
       const s = document.createElement('script')
@@ -370,6 +370,7 @@
     S.setTitle('Masuk')
     const next = new URLSearchParams(location.search).get('next')
     const safeNext = next && next.startsWith('/') && !next.startsWith('//') ? next : '/ruang'
+    if (/\.pages\.dev$/.test(location.hostname)) { v.innerHTML = `<h1>Masuk</h1><div class="notice">Masuk tersedia di domain utama SANDAR. <a class="btn" href="https://www.sandar.biz.id/masuk?next=${encodeURIComponent(safeNext)}">Lanjut ke www.sandar.biz.id</a></div>`; return }
     if (!cfg.clerkPk) { v.innerHTML = '<h1>Masuk</h1><div class="notice warn">Layanan masuk belum dikonfigurasi. Katalog publik tetap tersedia.</div>'; return }
     if (S.signedIn()) return S.go(safeNext)
     v.innerHTML = `
