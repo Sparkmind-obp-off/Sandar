@@ -6,7 +6,7 @@ import { ApiError, newId, nowIso, safeJsonParse, todayIso } from '../lib/util'
 import { hasConsent } from '../lib/ops'
 import { consume } from '../domain/entitlements'
 import { summarize, formatIdr, type CashItem } from '../domain/finance'
-import { groqComplete, tavilySearch, redact } from '../providers'
+import { groqComplete, groqModel, tavilySearch, redact } from '../providers'
 import { listingFreshness } from '../domain/catalogue'
 
 export type ResultItem = { text: string; kind: 'user_fact' | 'calculation' | 'source_fact' | 'suggestion' | 'ai_suggestion'; source_url?: string; checked_at?: string | null; status?: string }
@@ -229,7 +229,7 @@ export async function runTask(env: Bindings, user: AuthUser, taskId: string): Pr
         const r = await groqComplete(env, system, userMsg, 450)
         await event(db, taskId, 'tool', 'groq_rewrite', r.ok ? 'ok' : r.code, r.latency_ms)
         if (r.ok && r.data.trim()) {
-          result.ai = { used: true, provider: 'groq', model: env.GROQ_MODEL || 'llama-3.1-8b-instant' }
+          result.ai = { used: true, provider: 'groq', model: groqModel(env) }
           const lines = r.data.split('\n').map((l) => l.replace(/^\s*(\d+[.)]|[-*•])\s*/, '').trim()).filter((l) => l.length > 8).slice(0, 5)
           for (const l of lines) result.options.push({ text: l.slice(0, 300), kind: 'ai_suggestion' })
         } else result.ai.reason_not_used = r.ok ? 'AI tidak memberi jawaban.' : r.code === 'DISABLED' ? 'Penyedia AI belum dikonfigurasi.' : r.code === 'CAP_REACHED' ? 'Batas harian AI tercapai.' : 'AI sedang tidak tersedia; rencana dasar tetap ditampilkan.'

@@ -25,7 +25,7 @@ All amounts are hypotheses for validation, displayed as such in UI (`/harga`) an
 - `subscriptions` table: status pending/active/grace/cancelled/expired, `current_period_end`, `cancel_at_period_end`. Cancellation endpoint sets cancel-at-period-end.
 
 ## Unit-economics assumptions (to validate)
-- Groq: model `llama-3.1-8b-instant`, ≤ 450 output tokens per assist. Groq has a free tier with rate limits; paid pricing is per token — **verify current rates on console.groq.com before enabling a paid key**. At published low per-million-token prices, 150 assists × ~1k tokens is expected to cost well under Rp1.000/user/month, but this must be measured.
+- Groq: model `openai/gpt-oss-20b` (configurable via GROQ_MODEL; `llama-3.1-8b-instant` is not available on the owner account as of 2026-11-15), ≤ 450 output tokens per assist. Groq has a free tier with rate limits; paid pricing is per token — **verify current rates on console.groq.com before enabling a paid key**. At published low per-million-token prices, 150 assists × ~1k tokens is expected to cost well under Rp1.000/user/month, but this must be measured.
 - Tavily: free plan with a monthly credit allowance (verify); 60 searches/mo for Plus may exceed free allowance at scale → needs paid plan or lower quota.
 - Cloudflare: Pages + D1 free tier sufficient for early users.
 - Payment fees: see docs/33 (≈0.7% QRIS at Midtrans/Duitku).

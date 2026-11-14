@@ -37,7 +37,7 @@ export async function providerStatus(env: Bindings) {
     daily_cap: caps[p],
     used_today: used[p] || 0,
     state: !isConfigured(env, p) ? 'disabled' : (used[p] || 0) >= caps[p] ? 'cap_reached' : 'available',
-    model: p === 'groq' ? env.GROQ_MODEL || 'llama-3.1-8b-instant' : undefined,
+    model: p === 'groq' ? groqModel(env) : undefined,
   }))
 }
 
@@ -93,6 +93,7 @@ async function guarded<T>(env: Bindings, p: ProviderName, fn: () => Promise<{ re
 }
 
 // ---- Groq (OpenAI-compatible chat completions) -------------------------------
+export const groqModel = (env: Bindings) => env.GROQ_MODEL || 'openai/gpt-oss-20b'
 export async function groqComplete(env: Bindings, system: string, user: string, maxTokens = 500): Promise<ProviderResult<string>> {
   return guarded(
     env,
@@ -104,9 +105,11 @@ export async function groqComplete(env: Bindings, system: string, user: string, 
           method: 'POST',
           headers: { authorization: `Bearer ${env.GROQ_API_KEY}`, 'content-type': 'application/json' },
           body: JSON.stringify({
-            model: env.GROQ_MODEL || 'llama-3.1-8b-instant',
+            model: groqModel(env),
             temperature: 0.3,
             max_tokens: maxTokens,
+            // gpt-oss reasoning models: keep reasoning short and out of the visible answer
+            ...(/gpt-oss/.test(groqModel(env)) ? { reasoning_effort: 'low', reasoning_format: 'hidden' } : {}),
             messages: [
               { role: 'system', content: system },
               { role: 'user', content: user },

@@ -98,8 +98,8 @@
       ;(async () => {
         try {
           // Clerk Core 3 separates the prebuilt UI bundle from ClerkJS.
-          await loadScript(`https://${host}/npm/@clerk/ui@1.42.4/dist/ui.browser.js`)
-          await loadScript(`https://${host}/npm/@clerk/clerk-js@6.43.1/dist/clerk.browser.js`, cfg.clerkPk)
+          await loadScript(`https://${host}/npm/@clerk/ui@1/dist/ui.browser.js`)
+          await loadScript(`https://${host}/npm/@clerk/clerk-js@6/dist/clerk.browser.js`, cfg.clerkPk)
           await window.Clerk.load({
             localization: undefined,
             ui: { ClerkUI: window.__internal_ClerkUICtor },

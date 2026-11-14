@@ -12,7 +12,7 @@
     "AUTHORIZED_PARTIES": "https://sandar.biz.id,https://www.sandar.biz.id,https://sandar.pages.dev",
     "CLERK_PUBLISHABLE_KEY": "pk_live_Y2xlcmsuc2FuZGFyLmJpei5pZCQ",
     "CLERK_ISSUER": "https://clerk.sandar.biz.id",
-    "GROQ_MODEL": "llama-3.1-8b-instant",
+    "GROQ_MODEL": "openai/gpt-oss-20b",
     "PROVIDER_DAILY_CAPS": "groq=200,tavily=30,firecrawl=10",
     "BILLING_ENABLED": "false",
     "PAYMENT_PROVIDER": "none"
