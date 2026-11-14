@@ -32,7 +32,7 @@ SANDAR is a **life-navigation system**, not a computer operating system, not a c
 
 ## Current status
 
-**Stage: documentation-first foundation.** The repository began empty. This documentation establishes the product boundaries, MVP scope, safety model, data principles, research process, and implementation sequence. It does not claim that a working application, domain, legal clearance, or public-service integration already exists.
+**Stage: documentation-first foundation.** The repository began as an empty documentation-first foundation. It now contains 22 product and engineering documents. This documentation establishes the product boundaries, MVP scope, safety model, data principles, research process, and implementation sequence. It does not claim that a working application, domain, legal clearance, or public-service integration already exists.
 
 ## Documentation
 
@@ -49,6 +49,15 @@ SANDAR is a **life-navigation system**, not a computer operating system, not a c
 - [Decision log](docs/11-decision-log.md)
 - [Quality and acceptance criteria](docs/12-quality-acceptance.md)
 - [Open questions](docs/13-open-questions.md)
+- [Product requirements](docs/14-product-requirements.md)
+- [Experience and content design](docs/15-experience-and-content-design.md)
+- [Financial calculation specification](docs/16-financial-calculation-spec.md)
+- [Public catalogue specification](docs/17-public-catalogue-spec.md)
+- [AI orchestration and agent boundaries](docs/18-ai-orchestration-and-agent-boundaries.md)
+- [Initial threat model](docs/19-threat-model.md)
+- [Implementation backlog](docs/20-implementation-backlog.md)
+- [Test strategy](docs/21-test-strategy.md)
+- [Operations and release management](docs/22-operations-and-release.md)
 
 ## Working agreement
 
